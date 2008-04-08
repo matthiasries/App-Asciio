@@ -1,0 +1,398 @@
+#----------------------#
+# This is the todo.txt #
+#----------------------#
+
+screencast demo
+
+remove single wirl arrow object
+	=> a connection error occures when using a multiple wirl object with a single wirl
+		write a test where two boxes are connected with one type of arrow
+		and two other boxes with the other type of arrow, move the boxes around and 
+		compare the display
+
+*** unhandled exception in callback:
+***   Modification of non-creatable array value attempted, subscript -1 at lib/gpad_undo.pm line 115.
+***  ignoring at ./gpad.pl line 95.
+Use of uninitialized value in numeric eq (==) at lib/gpad.pm line 521.
+Use of uninitialized value in numeric eq (==) at lib/gpad.pm line 521.
+
+add easy way, through a shortcut,  to:
+	change arrow type
+		dots, equal, star, ...
+	make an arrow a muti wirl arow
+		=> use only multi wirl arrow
+	#box a text
+	#change box type
+
+Selection rectangle that just takes boxes
+
+move action constants to module
+
+connections connected to a start and an end connector are displayed with warning color
+	move to display plugins
+
+multi wirl extension as if we were drawing the arrow
+	when the mouse takes a turn, a wirl point is added
+	
+optimize do_stack serialization
+	# use bzip2
+	=> diff + compress
+		# tests done
+		must have a reverse diff that can patch both ways or it's not worth it
+		
+now arrow can match inside a box, moving an arrow around has become more tricky
+	=> do not connect if both ends are unconnected and arrow is being moved
+	
+dialogs
+	button missing icons
+	assign ctl + enter as OK in edit boxes
+		=> alt + C
+
+   .----------------------------------.
+   | X|O|  Box Attributes        |_|x |
+   |----------------------------------|
+   |.--------------------------------.|
+   || edit area                      ||
+   ||                                ||
+   ||                                ||
+   |'--------------------------------'|
+   |                    .------------.|
+   |                    | |X| _Close || <------.
+   |                    '------------'|        |
+   '----------------------------------'        |
+                                               |
+                                               |
+                         $dialog->add_button ('gtk-close' => 'close');
+
+
+#file name is not remembered on, first Save As
+	! not kept in the undo buffer
+	be carefull to not override SaveAs file name
+		=> don't go to previous file name if it was saved As
+	
+#flip start and end of arrows
+
+#action can register themselves so they can add entries in context menues
+
+#CREATE_BACKUP is saved and restored with the files!
+
+#arrow pointing in both direction
+	#wirl
+	#multi wirl
+
+	#quick insert short cut for both
+
+#do pod saving and loading without external commands and files
+
+#remove the cp command call and other backticks
+
+#connected box.pl with 3 boxes doesn't canonize the links properly
+	note that we are giving a missleading hint to start with
+	=> connections are right
+	
+!record gpad with do_stack and add a play_gpad script
+	=> better to save screenshots that are taken when using a keyboard shortcut
+	=> we can also record snippets, by recording at each create_undo_snapshot
+
+	=> use screencast
+	
+#exporting an imported pod generates a slightly different base64
+	check a gpade dump
+	=> Dumper had different order
+	
+#error when copying element that has connections
+	appeared after quick link implementation
+	connection seems to be wrong as it moves with the copied element but is not connected
+	difficult to reproduce
+	
+#shortcut to change the direction of an arrow instead for using wirl
+
+!auto connect with quick link uses the closest to the pointer
+	give hint to wirl creation
+	=> better to be consistent. preference can be given in actions/mouse.pl
+	
+#action shortcut should not be gtk dependent
+
+# remove redo_stack_maximum_size
+
+#action should register a name we can call them with  instead for calling them by keyboard mapping
+
+#move %loaded_types in gpad_io to object
+
+#save file sets title, or not
+	
+#gpad format is unreadable anyway, compress
+
+#gpade import/export
+	remove gpade from gpad
+
+# importer can set the title
+
+#open save POD
+
+#use work directory
+
+#remove all unecessary use from the action files
+
+#open save export as plugins
+
+#saving as xx.txt will not save anything in gpad anymore
+
+! add --setup to locate the setup directory
+	=> use file::Repository
+	=> use getopt
+
+#override/move gpad internally set variables with variables set in the setup files
+	#=> wait till tab to space is defined
+	
+#command to generate a stencil ready definition from the current state of an object
+	=> load multiple stencils and keep the filesystem structure in the popup menues
+	=> allow shortcut to be associated with the stencil elements (by name and in setup files)
+
+#drawing arrow into box connects the arrow
+
+#transfor tabs to space
+
+#only allow start-end connectors to link for multiwirl
+	but allow moving of the intermediate connectors
+
+#shortcut that adds elements but opens the edit dialog directly before inserting the object
+	should this be the default for object creation from stencils?
+		=> shall we add a EDIT_ON_CREATE fields=
+
+#ctl + shift + arrows => connect arrows as connect boxes does
+
+#color groups when using solid background
+	=> through a get_element_background_color
+
+#error shift plus select area doesn't work
+
+#do notshow resize rectangle if attribut is not set
+
+#error after aligning box centers, the connectors are real weird in if_elsif.gpad
+
+#verify all the '* $character_' and '\ $character_'
+
+#editing box breaks the connections
+
+#?use DTD::GTK for dumps
+
+!? table element
+	=> user defined plugin in the future
+	
+!one character element should move not resize
+
+#keyboard mapping
+
+#automatic moving of start connector is weird
+	=> $moved_connector_name
+	
+#-init
+
+#export is broken since 'save as' 
+
+#handle file save properly
+	#save unnamed to new name OK
+	#save unnamed to old name ASK FOR OVERRIDE PERMISSION
+	#save named DO NOT ASK NAME
+	#save as WORKS as save UNAMED
+	#save mark document as NOT MODIFIED (check undo still works)
+
+#redo
+
+#quick insert for text (same as quick insert for boxes)
+
+#save element's X Y in character sizes
+
+#access stencil elements by name
+
+!add module with shared constants (ie setup)
+	=> later
+	
+#update_diagram should be configurable
+	make a module so we can optimize a connection at the time
+		canonize uses $self for character size only
+	? ask for the optimal connection before creating it
+
+#subs to connect specific connectors wherever the elements are and they are sized
+
+#script using cononize_connection doesn't work, path was changed
+
+#make a script library
+
+!update_diagram should be called when running in script mode
+	let the script writer decide if they want "optimized" connections or not
+
+# proper setup structure
+
+#editable arrow has connections!! use resize/info/highlight points instead
+
+# export ASCII to clipboard
+
+#quick connect
+	if selected elements
+		connect element under to selected elements
+		deselect all
+	else
+		select element
+		
+#forward mouse to ACTIONS
+
+#$dragging moved to class
+	setting it should be possible through an API
+
+#auto connect that moves an arrow start should update the end connector
+
+#multi wirl in default gpad.pl
+
+#alignment tool
+
+#single group element copied still thinks it part of a group
+
+#changing text in if reconnect wrong
+
+#set/get_text
+
+#default glyph types for box
+
+#setting X, Y in scipts doesn't generate expected ASCII output
+
+#connector error in multi wirl
+
+#transfor to ASCII output has extra spaces
+
+#multiline arrow take direction for every point (for scripting)
+
+!--script my_script.pl
+
+#save on exit if modified
+
+#multiline arrow
+
+!reapeat box
+	given a text, it will repeat it depednding on the size
+		!full multiples or not
+
+#process box
+
+#segfault
+#can't use Data::TreeDumper in copy to clipboard
+
+# 'new connection' is flashed for a connector that is already connected
+
+#tab to select first element generate 'uninitialzed value at 134'
+
+#undo
+	#do not save undo buffer
+	
+#copy doesn't keep connections
+
+#front back break connections
+#keyboard move doesn't move connections
+
+!cycle color for selection points like for groups?
+
+#move $previous_x, $previous_y to the class
+
+#error: drawing connections on move
+#error: drawing connections on resize box
+#error: drawing connections on edit
+
+#refactor other end offsetting (used in move and resize)
+
+#missing: save connections
+
+#error moving groups looses connection
+
+#thrown a few boxes and arrows in an empty document
+
+#keyboard short cut
+	transparent mode
+	show connectors connections
+	
+#resize connectee doesn't move the connector
+
+#move  group looses connections
+
+#resizing downright arrow flips it to rightdown
+
+handle multiple character start and end in angled arrow
+handle \t in text
+
+#after changing line glyphs, it becomes right down from right up !!
+
+#ungrouping moves object up
+selecting a single group element, through selection rectangle, selects the whole group
+	right?
+
+#saving named objects uses the objects contents for the next copy
+
+#save doesn't save grouping !!
+	save elements without NAME to avoid overriding object at load time
+
+?? seems that selection rectangle sometimes doesn't work
+
+#selection is done botom  up instead for the opposite!
+#when bg selection is on, can't select fg
+
+selecting an element that is between two grouped elements is not possible
+
+!selection cycles through objects when clicking + tab
+
+#BOX2 with title and text only displays wrong size
+
+#box and arrow streching are not ont the same
+	box doesn't accept row 0
+
+#can't loade face file
+
+#edit text to empty string
+
+#if only one element is editable in a group, edit it
+	present selection box if multiple editable objects
+
+#handle \ in text for pango
+
+#_ is removed from name in menues
+
+spell cheker
+
+#grouping
+
+Window size in character multiples
+Drag drop objects from views or other aflow instance
+Select font
+Colored font
+Background color
+#Stencils are normal files
+#Grouping, alignment, send back/front
+#Grid display
+#Horizontal and vertical alignement lines
+!Objects are hilighted when overed (incuding groups)
+#Select and move object with a single click
+#Multiple object selection
+Save in multiple format, try to keep extra attributes like color
+        text, raw text, html
+
+!Object is an instance of a class
+        node can change class (eg from square to round)
+        class can be modified (eg color change for all nodes)
+
+Node class defines the node's apparence, class is a script
+
+User defined key mapping, mouse mapping and menu mapping
+#Static object mode
+        select object(s) and click to insert it without drag drop
+
+Layers?
+        each layer has its tab and one can see through tabs
+        how does this play with split window
+
+Scripts can add their mappings
+
+Scripts can generate new graphs
+Re-order script so objects without link are aligned under each other
+Routing and reordering script
+Script can be save in stencil
+Drag drop script object executes it
+

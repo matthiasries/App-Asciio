@@ -1,0 +1,94 @@
+#!/usr/bin/perl -w
+
+package main ;
+
+use strict;
+use warnings;
+
+use Glib ':constants';
+use Gtk2 -init;
+Gtk2->init;
+
+use App::Asciio ;
+
+#-----------------------------------------------------------------------------
+
+my $window = Gtk2::Window->new('toplevel');
+$window->set_title("asciio");
+$window->set_default_size(640, 480) ;
+$window->signal_connect("destroy", sub { exit(0); });
+
+my $vbox = Gtk2::VBox->new (FALSE, 0);
+$window->add($vbox);
+
+my $hpaned = Gtk2::HPaned->new;
+$vbox->pack_start($hpaned, TRUE, TRUE, 0);
+$hpaned->set_border_width (3);
+
+my @asciios ;
+
+my $asciio = new App::Asciio(50, 25) ;
+push @asciios, $asciio ;
+
+$hpaned->add1($asciio->{widget});
+$vbox->show_all();
+$window->show();
+
+$asciio->setup('setup/setup.ini') ;
+
+my ($character_width, $character_height) = $asciio->get_character_size() ;
+
+if(defined $ARGV[0])
+	{
+	use Gtk2::Gdk::Keysyms ;
+	my %K = %Gtk2::Gdk::Keysyms ;
+
+	$asciio->run_actions_by_name(["Open", $ARGV[0]]) ;
+	$asciio->set_modified_state(0) ;
+	}
+else
+	{
+	$asciio->add_ruler_lines(
+		{
+		TYPE => 'VERTICAL',
+		COLOR => [220, 200, 200],
+		POSITION => 80,
+		NAME => 'RIGHT_LIMIT',
+		},
+		
+		{
+		TYPE => 'HORIZONTAL',
+		COLOR => [220, 200, 200],
+		POSITION => 50,
+		NAME => 'BOTTOM_LIMIT',
+		},) ;
+		
+	$asciio->set_modified_state(0) ;
+	}
+	
+#--------------------------------------------------------------------------
+
+$window->signal_connect (delete_event => \&delete_event, \@asciios) ;
+
+sub delete_event
+{
+my ($window, $event, $asciios) = @_;
+my $answer = 'yes';
+
+my $should_save ;
+for my $asciio (@{$asciios})
+	{
+	$should_save++ if $asciio->get_modified_state() ;
+	}
+	
+if($should_save) 
+	{
+	$answer = App::Asciio::display_quit_dialog($window, 'asciio', ' ' x 25 . "Document is modified!\n\n\nAre you sure you want to quit and loose your changes?") ;
+	}
+	
+return $answer eq 'no';
+}
+
+#--------------------------------------------------------------------------
+
+Gtk2->main();

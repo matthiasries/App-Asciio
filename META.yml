@@ -1,0 +1,69 @@
+---
+name: App-Asciio
+version: 0.95_01
+author:
+  - 'Khemir Nadim ibn Hamouda. <nadim@khemir.net>'
+abstract: Developer release of asciio
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
+requires:
+  Algorithm::Diff: 0
+  Clone: 0
+  Compress::Bzip2: 0
+  Cwd: 0
+  Data::Compare: 0
+  Data::TreeDumper: 0
+  Data::TreeDumper::Renderer::GTK: 0
+  Directory::Scratch: 0
+  Directory::Scratch::Structured: 0
+  Eval::Context: 0
+  File::Basename: 0
+  File::Copy: 0
+  File::Slurp: 0
+  File::Spec: 0
+  Glib: 0
+  Gtk2: 0
+  Gtk2::Gdk::Keysyms: 0
+  List::MoreUtils: 0
+  List::Util: 0
+  MIME::Base64: 0
+  Module::Util: 0
+  Readonly: 0
+  Sub::Exporter: 0
+  Test::Block: 0
+  Test::Dependencies: 0
+  Test::Distribution: 0
+  Test::Exception: 0
+  Test::NoWarnings: 0
+  Test::Perl::Critic: 0
+  Test::Pod: 0
+  Test::Pod::Coverage: 0
+  Test::Spelling: 0
+  Test::Strict: 0
+  Test::Warn: 0
+  version: 0.5
+provides:
+  App::Asciio:
+    file: lib/App/Asciio.pm
+    version: 0.94
+  App::Asciio::stripes::editable_arrow2:
+    file: lib/App/Asciio/stripes/editable_arrow2.pm
+  App::Asciio::stripes::editable_box2:
+    file: lib/App/Asciio/stripes/editable_box2.pm
+  App::Asciio::stripes::if_box:
+    file: lib/App/Asciio/stripes/if_box.pm
+  App::Asciio::stripes::process_box:
+    file: lib/App/Asciio/stripes/process_box.pm
+  App::Asciio::stripes::section_wirl_arrow:
+    file: lib/App/Asciio/stripes/section_wirl_arrow.pm
+  App::Asciio::stripes::single_stripe:
+    file: lib/App/Asciio/stripes/single_stripe.pm
+  App::Asciio::stripes::stripes:
+    file: lib/App/Asciio/stripes/stripes.pm
+  App::Asciio::stripes::wirl_arrow:
+    file: lib/App/Asciio/stripes/wirl_arrow.pm
+generated_by: Module::Build version 0.2808
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2

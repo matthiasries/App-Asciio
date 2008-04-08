@@ -1,0 +1,17 @@
+Asciio
+====
+
+'Developer release of asciio'
+
+
+INSTALLATION
+------------
+
+To install this module type the following:
+
+   perl Build.PL
+   ./Build
+   ./Build test
+   ./Build install
+
+

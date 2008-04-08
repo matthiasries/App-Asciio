@@ -1,0 +1,624 @@
+$VAR1 = [
+
+          bless( {
+                   'HEIGHT' => 3,
+                   'TEXT' => '.----------.
+|          |
+\'----------\'',
+                   'NAME' => 'thin_box',
+                   'WIDTH' => 12,
+		   'TEXT_ONLY' => '',
+		   'TITLE' => '',
+		   'BOX_TYPE' => 
+				[
+				[TRUE, 'top', '.', '-', '.', TRUE, ],
+				[FALSE, 'title separator', '|', '-', '|', TRUE, ],
+				[TRUE, 'body separator', '| ', '|', ' |', TRUE, ], 
+				[TRUE, 'bottom', '\'', '-', '\'', TRUE, ],
+				] ,
+		   'EDITABLE' => 1,
+		   RESIZABLE => 1,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+                 }, 'App::Asciio::stripes::editable_box2' ),
+		 
+          bless( {
+                   'HEIGHT' => 1,
+                   'TEXT' => 'edit_me',
+                   'NAME' => 'text',
+                   'WIDTH' => 7,
+		   'TEXT_ONLY' => 'edit_me',
+		   'TITLE' => '',
+		   'BOX_TYPE' => 
+				[
+				[FALSE, 'top', '.', '-', '.', TRUE, ],
+				[FALSE, 'title separator', '.', '-', '.', TRUE, ],
+				[FALSE, 'body separator', '. ', '|', ' .', TRUE, ], 
+				[FALSE, 'bottom', '\'', '-', '\'', TRUE, ],
+				], 
+		   'EDITABLE' => 1,
+		   RESIZABLE => 1,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+                 }, 'App::Asciio::stripes::editable_box2' ),
+
+		 
+          bless( {
+                   'HEIGHT' => 1,
+                   'STRIPES' => [
+                                  {
+                                    'HEIGHT' => 1,
+                                     'TEXT' => '--->',
+                                    'WIDTH' => 4,
+                                    'X_OFFSET' => 0,
+                                    'Y_OFFSET' => 0
+                                  },
+				  ],
+                   'NAME' => 'wirl_arrow',
+		   DIRECTION => 'left',
+		  'ALLOW_DIAGONAL_LINES' => 0,
+                   'WIDTH' => 4,
+		   'ARROW_TYPE' => 
+				[
+				#name: $start, $body, $connection, $body_2, $end
+				
+				['origin', '', '*', '', '', '', TRUE],
+				['up', '|', '|', '', '', '^', TRUE],
+				['down', '|', '|', '', '', 'v', TRUE],
+				['left', '-', '-', '', '', '<', TRUE],
+				['upleft', '|', '|', '.', '-', '<', TRUE],
+				['leftup', '-', '-', '\'', '|', '^', TRUE],
+				['downleft', '|', '|', '\'', '-', '<', TRUE],
+				['leftdown', '-', '-', '.', '|', 'v', TRUE],
+				['right', '-', '-','', '', '>', TRUE],
+				['upright', '|', '|', '.', '-', '>', TRUE],
+				['rightup', '-', '-', '\'', '|', '^', TRUE],
+				['downright', '|', '|', '\'', '-', '>', TRUE],
+				['rightdown', '-', '-', '.', '|', 'v', TRUE],
+				['45', '/', '/', '', '', '^', TRUE, ],
+				['135', '\\', '\\', '', '', 'v', TRUE, ],
+				['225', '/', '/', '', '', 'v', TRUE, ],
+				['315', '\\', '\\', '', '', '^', TRUE, ],
+				], 
+		   EDITABLE => 1,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+		   END_X => 3, END_Y => 0,
+                 }, 'App::Asciio::stripes::wirl_arrow' ),
+		 
+          bless( {
+                   'HEIGHT' => 1,
+                   'STRIPES' => [
+                                  {
+                                    'HEIGHT' => 1,
+                                     'TEXT' => '<-->',
+                                    'WIDTH' => 4,
+                                    'X_OFFSET' => 0,
+                                    'Y_OFFSET' => 0
+                                  },
+				  ],
+                   'NAME' => 'wirl_arrow_double_pointed',
+		   DIRECTION => 'left',
+		  'ALLOW_DIAGONAL_LINES' => 0,
+                   'WIDTH' => 4,
+		   'ARROW_TYPE' => 
+				[
+				#name: $start, $body, $connection, $body_2, $end
+				
+				['origin', '', '*', '', '', '', TRUE],
+				['up', 'v', '|', '', '', '^', TRUE],
+				['down', '^', '|', '', '', 'v', TRUE],
+				['left', '>', '-', '', '', '<', TRUE],
+				['upleft', 'v', '|', '.', '-', '<', TRUE],
+				['leftup', '>', '-', '\'', '|', '^', TRUE],
+				['downleft', '^', '|', '\'', '-', '<', TRUE],
+				['leftdown', '>', '-', '.', '|', 'v', TRUE],
+				['right', '<', '-','', '', '>', TRUE],
+				['upright', 'v', '|', '.', '-', '>', TRUE],
+				['rightup', '<', '-', '\'', '|', '^', TRUE],
+				['downright', '^', '|', '\'', '-', '>', TRUE],
+				['rightdown', '<', '-', '.', '|', 'v', TRUE],
+				['45', 'v', '/', '', '', '^', TRUE, ],
+				['135', '^', '\\', '', '', 'v', TRUE, ],
+				['225', '^', '/', '', '', 'v', TRUE, ],
+				['315', 'v', '\\', '', '', '^', TRUE, ],
+				], 
+		   EDITABLE => 1,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+		   END_X => 3, END_Y => 0,
+                 }, 'App::Asciio::stripes::wirl_arrow' ),
+		 
+bless({
+        'NAME' => 'multi_wirl_arrow',
+	'HEIGHT' => 14,
+	'WIDTH' => 17,
+	'POINTS' => [[5,3],[15,-3]],
+	'SELECTED' => 0,
+	'EDITABLE' => 1,
+	'ALLOW_DIAGONAL_LINES' => 0,
+	'POINTS_OFFSETS' => [[0,0],[16,5]],
+	'DIRECTION' => 'down-right' ,
+	'ARROW_TYPE' => 
+		[
+		['origin', '', '*', '', '', '', TRUE],
+		['up', '|', '|', '', '', '^', TRUE],
+		['down', '|', '|', '', '', 'v', TRUE],
+		['left', '-', '-', '', '', '<', TRUE],
+		['upleft', '|', '|', '.', '-', '<', TRUE],
+		['leftup', '-', '-', '\'', '|', '^', TRUE],
+		['downleft', '|', '|', '\'', '-', '<', TRUE],
+		['leftdown', '-', '-', '.', '|', 'v', TRUE],
+		['right', '-', '-','', '', '>', TRUE],
+		['upright', '|', '|', '.', '-', '>', TRUE],
+		['rightup', '-', '-', '\'', '|', '^', TRUE],
+		['downright', '|', '|', '\'', '-', '>', TRUE],
+		['rightdown', '-', '-', '.', '|', 'v', TRUE],
+		['45', '/', '/', '', '', '^', TRUE, ],
+		['135', '\\', '\\', '', '', 'v', TRUE, ],
+		['225', '/', '/', '', '', 'v', TRUE, ],
+		['315', '\\', '\\', '', '', '^', TRUE, ],
+		], 
+	
+	'ARROWS' => 
+		[	
+		bless(
+			{
+			'HEIGHT' => 6,
+			'STRIPES' => 
+				[
+				{'TEXT' => '|
+|
+|
+|
+|
+\'',
+				'HEIGHT' => 6,
+				'Y_OFFSET' => 0,
+				'WIDTH' => 1,
+				'X_OFFSET' => 0}
+				,
+				{
+				'TEXT' => '--------------->',
+				'HEIGHT' => 1,
+				'Y_OFFSET' => 5,
+				'WIDTH' => 16,
+				'X_OFFSET' => 1
+				}
+				],
+		
+			'WIDTH' => 17,
+			'END_X' => 16,
+			'ARROW_TYPE' =>
+				[
+				#name: $start, $body, $connection, $body_2, $end
+				
+				['origin', '', '*', '', '', '', TRUE],
+				['up', '|', '|', '', '', '^', TRUE],
+				['down', '|', '|', '', '', 'v', TRUE],
+				['left', '-', '-', '', '', '<', TRUE],
+				['upleft', '|', '|', '.', '-', '<', TRUE],
+				['leftup', '-', '-', '\'', '|', '^', TRUE],
+				['downleft', '|', '|', '\'', '-', '<', TRUE],
+				['leftdown', '-', '-', '.', '|', 'v', TRUE],
+				['right', '-', '-','', '', '>', TRUE],
+				['upright', '|', '|', '.', '-', '>', TRUE],
+				['rightup', '-', '-', '\'', '|', '^', TRUE],
+				['downright', '|', '|', '\'', '-', '>', TRUE],
+				['rightdown', '-', '-', '.', '|', 'v', TRUE],
+				['45', '/', '/', '', '', '^', TRUE, ],
+				['135', '\\', '\\', '', '', 'v', TRUE, ],
+				['225', '/', '/', '', '', 'v', TRUE, ],
+				['315', '\\', '\\', '', '', '^', TRUE, ],
+				], 
+			'END_Y' => 5,
+			'DIRECTION' => 'down-right'
+			}, 'App::Asciio::stripes::wirl_arrow' ),
+	
+		bless(
+			{
+			'HEIGHT' => 9,
+			'STRIPES' => 
+				[
+				{'TEXT' => '|
+|
+|
+|
+|
+|
+|
+|
+\'',
+				'HEIGHT' => 9,
+				'Y_OFFSET' => 0,
+				'WIDTH' => 1,
+				'X_OFFSET' => 0
+				},
+				{
+				'TEXT' => '<---------',
+				'HEIGHT' => 1,
+				'Y_OFFSET' => 8,
+				'WIDTH' => 10,
+				'X_OFFSET' => -10
+				}
+				],
+	
+			'WIDTH' => 11,
+			'END_X' => -10,
+			'ARROW_TYPE' =>
+				[
+				['origin', '', '*', '', '', '', TRUE],
+				['up', '|', '|', '', '', '^', TRUE],
+				['down', '|', '|', '', '', 'v', TRUE],
+				['left', '-', '-', '', '', '<', TRUE],
+				['upleft', '|', '|', '.', '-', '<', TRUE],
+				['leftup', '-', '-', '\'', '|', '^', TRUE],
+				['downleft', '|', '|', '\'', '-', '<', TRUE],
+				['leftdown', '-', '-', '.', '|', 'v', TRUE],
+				['right', '-', '-','', '', '>', TRUE],
+				['upright', '|', '|', '.', '-', '>', TRUE],
+				['rightup', '-', '-', '\'', '|', '^', TRUE],
+				['downright', '|', '|', '\'', '-', '>', TRUE],
+				['rightdown', '-', '-', '.', '|', 'v', TRUE],
+				['45', '/', '/', '', '', '^', TRUE, ],
+				['135', '\\', '\\', '', '', 'v', TRUE, ],
+				['225', '/', '/', '', '', 'v', TRUE, ],
+				['315', '\\', '\\', '', '', '^', TRUE, ],
+				] ,
+			'END_Y' => 8,
+			'DIRECTION' => 'down-left',
+			}, 'App::Asciio::stripes::wirl_arrow' )
+		],
+	}, 'App::Asciio::stripes::section_wirl_arrow' ) ,
+	
+bless({
+        'NAME' => 'multi_wirl_arrow_double_pointed',
+	'HEIGHT' => 14,
+	'WIDTH' => 17,
+	'POINTS' => [[5,3],[15,-3]],
+	'SELECTED' => 0,
+	'EDITABLE' => 1,
+	'ALLOW_DIAGONAL_LINES' => 0,
+	'POINTS_OFFSETS' => [[0,0],[16,5]],
+	'DIRECTION' => 'down-right' ,
+	'ARROW_TYPE' => 
+		[
+		#name: $start, $body, $connection, $body_2, $end
+
+		['origin', '', '*', '', '', '', TRUE],
+		['up', 'v', '|', '', '', '^', TRUE],
+		['down', '^', '|', '', '', 'v', TRUE],
+		['left', '>', '-', '', '', '<', TRUE],
+		['upleft', 'v', '|', '.', '-', '<', TRUE],
+		['leftup', '>', '-', '\'', '|', '^', TRUE],
+		['downleft', '^', '|', '\'', '-', '<', TRUE],
+		['leftdown', '>', '-', '.', '|', 'v', TRUE],
+		['right', '<', '-','', '', '>', TRUE],
+		['upright', 'v', '|', '.', '-', '>', TRUE],
+		['rightup', '<', '-', '\'', '|', '^', TRUE],
+		['downright', '^', '|', '\'', '-', '>', TRUE],
+		['rightdown', '<', '-', '.', '|', 'v', TRUE],
+		['45', 'v', '/', '', '', '^', TRUE, ],
+		['135', '^', '\\', '', '', 'v', TRUE, ],
+		['225', '^', '/', '', '', 'v', TRUE, ],
+		['315', 'v', '\\', '', '', '^', TRUE, ],
+		], 
+	
+	'ARROWS' => 
+		[	
+		bless(
+			{
+			'HEIGHT' => 6,
+			'STRIPES' => 
+				[
+				{'TEXT' => '^
+|
+|
+|
+|
+\'',
+				'HEIGHT' => 6,
+				'Y_OFFSET' => 0,
+				'WIDTH' => 1,
+				'X_OFFSET' => 0}
+				,
+				{
+				'TEXT' => '--------------->',
+				'HEIGHT' => 1,
+				'Y_OFFSET' => 5,
+				'WIDTH' => 16,
+				'X_OFFSET' => 1
+				}
+				],
+		
+			'WIDTH' => 17,
+			'END_X' => 16,
+			'ARROW_TYPE' => 
+				[
+				#name: $start, $body, $connection, $body_2, $end
+
+				['origin', '', '*', '', '', '', TRUE],
+				['up', 'v', '|', '', '', '^', TRUE],
+				['down', '^', '|', '', '', 'v', TRUE],
+				['left', '>', '-', '', '', '<', TRUE],
+				['upleft', 'v', '|', '.', '-', '<', TRUE],
+				['leftup', '>', '-', '\'', '|', '^', TRUE],
+				['downleft', '^', '|', '\'', '-', '<', TRUE],
+				['leftdown', '>', '-', '.', '|', 'v', TRUE],
+				['right', '<', '-','', '', '>', TRUE],
+				['upright', 'v', '|', '.', '-', '>', TRUE],
+				['rightup', '<', '-', '\'', '|', '^', TRUE],
+				['downright', '^', '|', '\'', '-', '>', TRUE],
+				['rightdown', '<', '-', '.', '|', 'v', TRUE],
+				['45', 'v', '/', '', '', '^', TRUE, ],
+				['135', '^', '\\', '', '', 'v', TRUE, ],
+				['225', '^', '/', '', '', 'v', TRUE, ],
+				['315', 'v', '\\', '', '', '^', TRUE, ],
+				], 
+			'END_Y' => 5,
+			'DIRECTION' => 'down-right'
+			}, 'App::Asciio::stripes::wirl_arrow' ),
+	
+		bless(
+			{
+			'HEIGHT' => 9,
+			'STRIPES' => 
+				[
+				{'TEXT' => '|
+|
+|
+|
+|
+|
+|
+|
+\'',
+				'HEIGHT' => 9,
+				'Y_OFFSET' => 0,
+				'WIDTH' => 1,
+				'X_OFFSET' => 0
+				},
+				{
+				'TEXT' => '<---------',
+				'HEIGHT' => 1,
+				'Y_OFFSET' => 8,
+				'WIDTH' => 10,
+				'X_OFFSET' => -10
+				}
+				],
+	
+			'WIDTH' => 11,
+			'END_X' => -10,
+			'ARROW_TYPE' => 
+				[
+				#name: $start, $body, $connection, $body_2, $end
+
+				['origin', '', '*', '', '', '', TRUE],
+				['up', 'v', '|', '', '', '^', TRUE],
+				['down', '^', '|', '', '', 'v', TRUE],
+				['left', '>', '-', '', '', '<', TRUE],
+				['upleft', 'v', '|', '.', '-', '<', TRUE],
+				['leftup', '>', '-', '\'', '|', '^', TRUE],
+				['downleft', '^', '|', '\'', '-', '<', TRUE],
+				['leftdown', '>', '-', '.', '|', 'v', TRUE],
+				['right', '<', '-','', '', '>', TRUE],
+				['upright', 'v', '|', '.', '-', '>', TRUE],
+				['rightup', '<', '-', '\'', '|', '^', TRUE],
+				['downright', '^', '|', '\'', '-', '>', TRUE],
+				['rightdown', '<', '-', '.', '|', 'v', TRUE],
+				['45', 'v', '/', '', '', '^', TRUE, ],
+				['135', '^', '\\', '', '', 'v', TRUE, ],
+				['225', '^', '/', '', '', 'v', TRUE, ],
+				['315', 'v', '\\', '', '', '^', TRUE, ],
+				], 
+			'END_Y' => 8,
+			'DIRECTION' => 'down-left',
+			}, 'App::Asciio::stripes::wirl_arrow' )
+		],
+	}, 'App::Asciio::stripes::section_wirl_arrow' ) ,
+	
+          bless( {
+                   'HEIGHT' => 4,
+                   'STRIPES' => [
+				{
+				'HEIGHT' => 2,
+				'TEXT' => "______________\n\\             \\",
+				'WIDTH' => 15,
+				'X_OFFSET' => 0,
+				'Y_OFFSET' =>0,
+				},
+				{
+				'HEIGHT' => 1,
+				'TEXT' => ")             )",
+				'WIDTH' => 15,
+				'X_OFFSET' => 1,
+				'Y_OFFSET' => 2 ,
+				},
+				{
+				'HEIGHT' => 1,
+				'TEXT' => "/_____________/",
+				'WIDTH' => 15,
+				'X_OFFSET' =>0,
+				'Y_OFFSET' => 3 ,
+				}
+				],
+		  TEXT_ONLY => '',
+		  LEFT_CENTER_X => 0,
+		  RESIZE_POINT_X => 14,
+                   'NAME' => 'box/process',
+                   'WIDTH' => 16,
+		   EDITABLE => 1,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+                 }, 'App::Asciio::stripes::process_box' ),
+		 
+          bless( {
+                   'HEIGHT' => 3,
+                   'TEXT' => '************
+*          *
+************',
+                   'NAME' => 'box/star_box',
+                   'WIDTH' => 12,
+		   'TEXT_ONLY' => '',
+		   'TITLE' => '',
+		   'BOX_TYPE' => 
+				[
+				[TRUE, 'top', '*', '*', '*', TRUE, ],
+				[FALSE, 'title separator', '*', '-', '*', TRUE, ],
+				[TRUE, 'body separator', '* ', '|', ' *', TRUE, ], 
+				[TRUE, 'bottom', '*', '*', '*', TRUE, ],
+				] ,
+		   'EDITABLE' => 1,
+		   RESIZABLE => 1,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+                 }, 'App::Asciio::stripes::editable_box2' ),
+		 
+          bless( {
+                   'STRIPES' => [
+                                  {
+                                    'HEIGHT' => 1,
+                                     'TEXT' => '--->',
+                                    'WIDTH' => 4,
+                                    'X_OFFSET' => 0,
+                                    'Y_OFFSET' => 0
+                                  },
+				  ],
+                   'NAME' => 'Rulers/axis',
+		   'ARROW_TYPE' => 
+				[
+				['Up', '|', '|', '^', TRUE, ],
+				['45', '/', '/', '^', TRUE, ],
+				['Right', '-', '-', '>', TRUE, ],
+				['135', '\\', '\\', 'v', TRUE, ],
+				['Down', '|', '|', 'v', TRUE, ],
+				['225', '/', '/', 'v', TRUE, ],
+				['Left', '-', '-', '<', TRUE, ],
+				['315', '\\', '\\', '^', TRUE, ],
+				], 
+		   EDITABLE => 1,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+		   END_X => 3, END_Y => 0,
+                 }, 'App::Asciio::stripes::editable_arrow2' ),
+		 
+          bless( {
+                   'HEIGHT' => 1,
+                   'TEXT' => '01___5____0____5____0____5____0____5____0____5____0',
+                   'NAME' => 'Rulers/01_to_50_horizontal',
+                   'WIDTH' => 51,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+                 }, 'App::Asciio::stripes::single_stripe' ),
+		 
+          bless( {
+                   'HEIGHT' => 1,
+                   'TEXT' => '0123456789',
+                   'NAME' => 'Rulers/0_to_9_horizontal',
+                   'WIDTH' => 10,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+                 }, 'App::Asciio::stripes::single_stripe' ),
+		 
+          bless( {
+                   'HEIGHT' => 10,
+                   'TEXT' => '0
+1
+2
+3
+4
+5
+6
+7
+8
+9',
+                   'NAME' => 'Rulers/0_to_9_vertical',
+                   'WIDTH' => 1,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+                 }, 'App::Asciio::stripes::single_stripe' ),
+		 
+		bless( {
+			  'NAME' => 'box/if',
+			  'HEIGHT' => 5,
+			  'WIDTH' => 16,
+			  'SELECTED' => 0,
+			  'TEXT_ONLY' => '',
+			  'TEXT' => '  .----------.
+ /            \\
+(              )
+ \\            /
+  \'----------\'
+',
+			  'EDITABLE' => 1,
+			  'RESIZABLE' => 1
+			}, 'App::Asciio::stripes::if_box' ),
+			
+          bless( {
+                   'HEIGHT' => 10,
+                   'TEXT' => '1234567890
+2        |
+3        |
+4        |
+5        |
+6        |
+7        |
+8        |
+9        |
+0--------\'',
+                   'NAME' => 'Misc/Box/10_by_10',
+                   'WIDTH' => 10,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+                 }, 'App::Asciio::stripes::single_stripe' ),
+		 
+          bless( {
+                   'HEIGHT' => 3,
+                   'TEXT' => ' o
+/|\\
+/ \\',
+                   'NAME' => 'Misc/People/arms_down',
+                   'WIDTH' => 3,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+                 }, 'App::Asciio::stripes::single_stripe' ),
+		 
+          bless( {
+                   'HEIGHT' => 3,
+                   'TEXT' => '\\o/
+ |
+/ \\',
+                   'NAME' => 'Misc/People/arms_up',
+                   'WIDTH' => 3,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+                 }, 'App::Asciio::stripes::single_stripe' ),
+		 
+          bless( {
+                   'HEIGHT' => 3,
+                   'TEXT' => '(\_/)
+(O.o)
+(> <)',
+                   'NAME' => 'Misc/People/Bunny',
+                   'WIDTH' => 5,
+                   'TEXT_ONLY' => '(\_/)
+(O.o)
+(> <)',
+		   'TITLE' => '',
+		   'BOX_TYPE' => 
+				[
+				[FALSE, 'top', '.', '-', '.', TRUE, ],
+				[FALSE, 'title separator', '|', '-', '|', TRUE, ],
+				[FALSE, 'body separator', '| ', '|', ' |', TRUE, ], 
+				[FALSE, 'bottom', '\'', '-', '\'', TRUE, ],
+				] ,
+		   'EDITABLE' => 0,
+		   RESIZABLE => 0,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+                 }, 'App::Asciio::stripes::editable_box2' ),
+		 
+          bless( {
+                   'HEIGHT' => 10,
+                   'TEXT' => ' -.-.-,~ .
+ )     (
+ |_    |
+ /(_)---`\\
+(_      -\'
+ ]      |
+ |    _,\')
+ [_,-\'_-\'(
+(_).-\'    \\
+/ /        \\ ',
+                   'NAME' => 'Misc/People/Dilbert',
+                   'WIDTH' => 13,
+		   X_OFFSET => 0, Y_OFFSET => 0,
+                 }, 'App::Asciio::stripes::single_stripe' ),
+		 
+		];
