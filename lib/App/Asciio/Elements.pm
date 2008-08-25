@@ -5,6 +5,7 @@ $|++ ;
 
 use strict;
 use warnings;
+use Carp ;
 
 use Data::Dumper ;
 use Data::TreeDumper ;
@@ -78,6 +79,15 @@ return($self->{ALLOCATED_COLORS}{$name}) ;
 
 #-----------------------------------------------------------------------------
 
+sub flush_color_cache
+{
+my ($self) = @_ ;
+delete $self->{ALLOCATED_COLORS} ;
+}
+
+
+#-----------------------------------------------------------------------------
+
 sub get_group_color
 {
 # cycle through color to give visual clue to user
@@ -101,6 +111,55 @@ push @{$self->{RULER_LINES}}, @lines ;
 $self->{MODIFIED }++ ;
 }
 
+sub remove_ruler_lines
+{
+my ($self, @ruler_lines_to_remove) = @_ ;
+
+my %removed ;
+
+for my $ruler_line_to_remove (@ruler_lines_to_remove)
+	{
+	for my $ruler_line (@{$self->{RULER_LINES}})
+		{
+		if
+			(
+			$ruler_line->{TYPE} eq $ruler_line_to_remove->{TYPE}
+			&& $ruler_line->{POSITION} == $ruler_line_to_remove->{POSITION}
+			)
+			{
+			$removed{$ruler_line} ++ ;
+			}
+		}
+	}
+	
+$self->{RULER_LINES} = [grep {! exists $removed{$_}} @{$self->{RULER_LINES}} ] ;
+}
+
+sub exists_ruler_line
+{
+my ($self, @ruler_lines_to_check) = @_ ;
+
+my $exists = 0 ;
+
+for my $ruler_line_to_check (@ruler_lines_to_check)
+	{
+	for my $ruler_line (@{$self->{RULER_LINES}})
+		{
+		if
+			(
+			$ruler_line->{TYPE} eq $ruler_line_to_check->{TYPE}
+			&& $ruler_line->{POSITION} == $ruler_line_to_check->{POSITION}
+			)
+			{
+			$exists++ ;
+			last ;
+			}
+		}
+	}
+	
+return $exists ;
+}
+
 #-----------------------------------------------------------------------------
 
 sub add_new_element_named
@@ -115,7 +174,7 @@ if(defined $element_index)
 	}
 else
 	{
-	die "create_new_element_by_name: can't create element named '$element_name'!\n" ;
+	croak "add_new_element_named: can't create element named '$element_name'!\n" ;
 	}
 }
 
@@ -199,6 +258,7 @@ for my $element (@elements)
 	{
 	@$element{'X', 'Y'} =	($element->{X} + $x_offset, $element->{Y} + $y_offset) ;
 		
+	# handle arrow element
 	my (@current_element_connections, %used_connectors) ;
 	
 	if($self->is_connected($element))
@@ -241,12 +301,13 @@ for my $element (@elements)
 				
 	$self->add_connections(@new_connections) ;
 	
+	# handle box  element
 	for my $connection ($self->get_connected($element))
 		{
 		# move connected with connectees
 		if (exists $selected_elements{$connection->{CONNECTED}})
 			{
-			# connections will be moved
+			# arrow is part of the selection being moved
 			}
 		else
 			{
@@ -422,11 +483,99 @@ $self->{MODIFIED }++ ;
 
 #-----------------------------------------------------------------------------
 
+sub edit_element
+{
+my ($self, $selected_element) = @_ ;
+
+$selected_element->edit() ;
+
+# handle connections
+if($self->is_connected($selected_element))
+	{
+	# disconnect current connections
+	$self->delete_connections_containing($selected_element) ;
+	}
+	
+#~ !!! TODO if not already connected to them (same connection)
+$self->connect_elements($selected_element) ; # connect to new elements if any
+
+
+for my $connection ($self->get_connected($selected_element))
+	{
+	# all connection where the selected element is the connectee
+	
+	my ($new_connection) = # in characters relative to element origin
+			$selected_element->get_named_connection($connection->{CONNECTION}{NAME}) ;
+	
+	if(defined $new_connection)
+		{
+		my ($x_offset, $y_offset, $width, $height, $new_connector) = 
+			$connection->{CONNECTED}->move_connector
+				(
+				$connection->{CONNECTOR}{NAME},
+				$new_connection->{X} - $connection->{CONNECTION}{X},
+				$new_connection->{Y}- $connection->{CONNECTION}{Y}
+				) ;
+				
+		$connection->{CONNECTED}{X} += $x_offset ;
+		$connection->{CONNECTED}{Y} += $y_offset;
+		
+		# the connection point has also changed
+		$connection->{CONNECTOR} = $new_connector ;
+		$connection->{CONNECTION} = $new_connection ;
+		
+		$connection->{FIXED}++ ;
+		
+		#find the other connectors belonging to this connected
+		for my $other_connection (grep{ ! $_->{FIXED}} @{$self->{CONNECTIONS}})
+			{
+			# move them relatively to their previous position
+			if($connection->{CONNECTED} == $other_connection->{CONNECTED})
+				{
+				my ($new_connector) = # in characters relative to element origin
+						$other_connection->{CONNECTED}->get_named_connection($other_connection->{CONNECTOR}{NAME}) ;
+				
+				$other_connection->{CONNECTOR} = $new_connector ;
+				$other_connection->{FIXED}++ ;
+				}
+			}
+			
+		for my $connection (@{$self->{CONNECTIONS}})
+			{
+			delete $connection->{FIXED} ;
+			}
+		}
+	else
+		{
+		$self->delete_connections($connection) ;
+		}
+		
+	#~ TODO fix the other connection as move does above
+	}
+	
+$self->{MODIFIED }++ ;
+}
+
+#-----------------------------------------------------------------------------
+
 sub get_selected_elements
 {
 my ($self, $state) = @_ ;
 
-return(grep {exists $_->{SELECTED} && $_->{SELECTED} == $state} @{$self->{ELEMENTS}}) ;
+return
+	(
+	grep 
+		{
+		if($state)
+			{
+			exists $_->{SELECTED} && $_->{SELECTED} != 0
+			}
+		else
+			{
+			! exists $_->{SELECTED} || $_->{SELECTED} == 0
+			}
+		} @{$self->{ELEMENTS}}
+	) ;
 }
 
 #-----------------------------------------------------------------------------
@@ -448,7 +597,14 @@ my %groups_to_select ;
 
 for my $element (@elements) 
 	{
-	$element->{SELECTED} = $state ;
+	if($state)
+		{
+		$element->{SELECTED} = ++$self->{SELECTION_INDEX} ;
+		}
+	else
+		{
+		$element->{SELECTED} = 0 ;
+		}
 	
 	if(exists $element->{GROUP} && defined $element->{GROUP}[-1])
 		{
@@ -465,9 +621,18 @@ for my $element (@{$self->{ELEMENTS}})
 		&& exists $groups_to_select{$element->{GROUP}[-1]}
 		)
 		{
-		$element->{SELECTED} = $state ;
+		if($state)
+			{
+			$element->{SELECTED} = ++$self->{SELECTION_INDEX} ;
+			}
+		else
+			{
+			$element->{SELECTED} = 0 ;
+			}
 		}
 	}
+	
+delete $self->{SELECTION_INDEX} unless $self->get_selected_elements(1) ;
 }
 
 #-----------------------------------------------------------------------------
@@ -480,6 +645,8 @@ for my $element (@elements)
 	{
 	$self->select_elements($element->{SELECTED} ^ 1, $element)  ;
 	}
+
+delete $self->{SELECTION_INDEX} unless $self->get_selected_elements(1) ;
 }
 
 #-----------------------------------------------------------------------------

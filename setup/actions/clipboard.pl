@@ -18,6 +18,7 @@ register_action_handlers
 		],
 		
 	'Export to clipboard as ascii'=> ['C00-e', \&export_to_clipboard_as_ascii] ,
+	'Import from clipboard to box'=> ['C0S-E', \&import_from_clipboard_to_box] ,
 	) ;
 
 #----------------------------------------------------------------------------------------------
@@ -26,9 +27,27 @@ sub export_to_clipboard_as_ascii
 {
 my ($self) = @_ ;
 
-my $ascii = $self->transform_elements_to_ascii_buffer() ;
+my $ascii = $self->transform_elements_to_ascii_buffer($self->get_selected_elements(1)) ;
 
 Gtk2::Clipboard->get (Gtk2::Gdk->SELECTION_CLIPBOARD)->set_text($ascii);
+}
+
+#----------------------------------------------------------------------------------------------
+
+sub import_from_clipboard_to_box
+{
+my ($self) = @_ ;
+
+my $ascii = Gtk2::Clipboard->get (Gtk2::Gdk->SELECTION_CLIPBOARD)->wait_for_text();
+
+my $element = $self->add_new_element_named('stencils/asciio/box', $self->{MOUSE_X}, $self->{MOUSE_Y}) ;
+
+$element->set_text('', $ascii) ;
+
+$self->select_elements(1, $element) ;
+
+$self->update_display() ;
+
 }
 
 #----------------------------------------------------------------------------------------------
@@ -74,13 +93,13 @@ $self->select_elements(0, @{$self->{ELEMENTS}}) ;
 unless(defined $x_offset)
 	{
 	my $min_x = min(map {$_->{X}} @{$self->{CLIPBOARD}{ELEMENTS}}) ;
-	$x_offset = min($min_x, $self->{COPY_OFFSET_X}) ;
+	$x_offset = $min_x - $self->{MOUSE_X} ;
 	}
 
 unless(defined $y_offset)
 	{
 	my $min_y = min(map {$_->{Y}} @{$self->{CLIPBOARD}{ELEMENTS}}) ;
-	$y_offset = min($min_y, $self->{COPY_OFFSET_Y}) ;
+	$y_offset = $min_y  - $self->{MOUSE_Y} ;
 	}
 
 my %new_group ;

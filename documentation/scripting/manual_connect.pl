@@ -10,7 +10,12 @@ use scripting_lib ;
 #-----------------------------------------------------------------------------
 
 my $asciio = new App::Asciio() ;
-$asciio->setup('setup/setup.ini') ;
+my ($command_line_switch_parse_ok, $command_line_parse_message, $asciio_config)
+	= $asciio->ParseSwitches([@ARGV], 0) ;
+
+die "Error: '$command_line_parse_message'!" unless $command_line_switch_parse_ok ;
+
+$asciio->setup($asciio_config->{SETUP_INI_FILE}, $asciio_config->{SETUP_PATH}) ;
 
 #-----------------------------------------------------------------------------
 
@@ -26,8 +31,8 @@ $asciio->add_element_at($box3, 40, 5) ;
 my $arrow = new_wirl_arrow () ;
 $asciio->add_element_at($arrow, 0,0) ;
 
-my $start_connection = move_named_connector($arrow, 'start', $box1, 'bottom_center');
-my $end_connection = move_named_connector($arrow, 'end', $box2, 'bottom_center') ;
+my $start_connection = move_named_connector($arrow, 'startsection_0', $box1, 'bottom_center');
+my $end_connection = move_named_connector($arrow, 'endsection_0', $box2, 'bottom_center') ;
 
 die "missing connection!" unless defined $start_connection && defined $end_connection ;
 

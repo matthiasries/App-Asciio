@@ -458,7 +458,7 @@ my $window = new Gtk2::Window() ;
 
 my $dialog = Gtk2::Dialog->new('Arrow attributes', $window, 'destroy-with-parent')  ;
 $dialog->set_default_size (220, 270);
-$dialog->add_button ('gtk-close' => 'close');
+$dialog->add_button ('gtk-ok' => 'ok');
 
 #~ my $vbox = $dialog->vbox ;
 my $dialog_vbox = $dialog->vbox ;

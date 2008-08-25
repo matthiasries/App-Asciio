@@ -29,11 +29,10 @@ sub new_wirl_arrow
 {
 my (@arguments) = @_ ;
 
-use App::Asciio::stripes::wirl_arrow ;
-my $arrow = new App::Asciio::stripes::wirl_arrow
+use App::Asciio::stripes::section_wirl_arrow ;
+my $arrow = new App::Asciio::stripes::section_wirl_arrow
 					({
-					END_X => 5,
-					END_Y => 5,
+					POINTS => [[5, 5, 'downright']],
 					DIRECTION => '',
 					ALLOW_DIAGONAL_LINES => 0,
 					EDITABLE => 1,
@@ -56,18 +55,21 @@ my $destination_connection = $destination_connections[0] ;
 my @source_connections = grep {$_->{NAME} ne 'resize'} $source_element->get_connection_points() ;
 my $source_connection = $source_connections[0] ;
 
-use App::Asciio::stripes::wirl_arrow ;
-
-my $new_element = new App::Asciio::stripes::wirl_arrow
+my $new_element = new App::Asciio::stripes::section_wirl_arrow
 					({
-					END_X => 
+					POINTS => 
+						[
+							[
 							    ($destination_element->{X} + $destination_connection->{X})
 							  - ($source_element->{X} + $source_connection->{X}) ,
 							
-					END_Y => 
 							    ($destination_element->{Y} + $destination_connection->{Y})
 							 -  ($source_element->{Y} + $source_connection->{Y}) ,
 							 
+							$hint,
+							]
+						],
+						
 					DIRECTION => $hint,
 					ALLOW_DIAGONAL_LINES => 0,
 					EDITABLE => 1,

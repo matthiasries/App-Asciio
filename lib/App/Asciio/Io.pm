@@ -91,11 +91,12 @@ my @keys = keys %{$new_self} ;
 
 sub load_elements
 {
-my ($self, $file_name)  = @_;
+my ($self, $file_name, $path)  = @_;
 
 return unless defined $file_name ;
 
 my $elements = do $file_name or die "can't load file '$file_name': $! $@\n" ;
+$path = '' unless defined $path ;
 
 for my $new_element (@{$elements})
 	{
@@ -111,14 +112,19 @@ for my $new_element (@{$elements})
 	
 	my $next_element_type_index = @{$self->{ELEMENT_TYPES}} ;
 	
+	$new_element->{NAME} = "$path/$new_element->{NAME}" ;
+	$new_element->{NAME} =~ s~/+~/~g ;
+	$new_element->{NAME} =~ s~^/~~g ;
+	
+	#~ print $new_element->{NAME} . "\n" ;
+	
 	if(exists $new_element->{NAME})
 		{
 		if(exists $self->{ELEMENT_TYPES_BY_NAME}{$new_element->{NAME}})
 			{
 			print "Overriding element type '$new_element->{NAME}'!\n" ;
-			$self->{ELEMENT_TYPES}
-					[$self->{ELEMENT_TYPES_BY_NAME}{$new_element->{NAME}}]
-						= $new_element ;
+			$self->{ELEMENT_TYPES}[$self->{ELEMENT_TYPES_BY_NAME}{$new_element->{NAME}}]
+				= $new_element ;
 			}
 		else
 			{
@@ -132,6 +138,48 @@ for my $new_element (@{$elements})
 	if(exists $new_element->{X})
 		{
 		push @{$self->{ELEMENTS}}, $new_element ;
+		}
+	}
+}
+
+#-----------------------------------------------------------------------------
+
+sub save_stencil
+{
+my ($self) = @_ ;
+
+my $name = $self->display_edit_dialog('stencil name') ;
+
+if(defined $name && $name ne q[])
+	{
+	my $file_name = $self->get_file_name('save') ;
+
+	if(defined $file_name && $file_name ne q[])
+		{
+		if(-e $file_name)
+			{
+			my $override = $self->display_yes_no_cancel_dialog
+						(
+						"Override file!",
+						"File '$file_name' exists!\nOverride file?"
+						) ;
+						
+			$file_name = undef unless $override eq 'yes' ;
+			}
+		}
+
+	if(defined $file_name && $file_name ne q[])
+		{
+		use Data::Dumper ;
+		my ($element) = $self->get_selected_elements(1) ;
+		
+		my $stencil = Clone::clone($element) ;
+		
+		delete $stencil->{X} ;
+		delete $stencil->{Y} ;
+		$stencil->{NAME} = $name;
+		
+		write_file($file_name, Dumper [$stencil]) ;
 		}
 	}
 }
@@ -190,7 +238,7 @@ else
 	if($self->{CREATE_BACKUP} && -e $file_name)
 		{
 		use File::Copy;
-		copy($file_name,"$file_name.bak") or die "export_pod: Copy failed while making backup copy: $!";		
+		copy($file_name,"$file_name.bak") or die "save_with_type: Copy failed while making backup copy: $!";		
 		}
 		
 	write_file($file_name,compress($self->serialize_self() .'$VAR1 ;')) ;

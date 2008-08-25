@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use lib qw(lib lib/stripes documentation/scripting/lib) ;
+use lib qw(lib/stripes documentation/scripting/lib) ;
 
 use App::Asciio ;
 use scripting_lib ;
@@ -10,7 +10,13 @@ use scripting_lib ;
 #-----------------------------------------------------------------------------
 
 my $asciio = new App::Asciio() ;
-$asciio->setup('setup/setup.ini') ;
+
+my ($command_line_switch_parse_ok, $command_line_parse_message, $asciio_config)
+	= $asciio->ParseSwitches([@ARGV], 0) ;
+
+die "Error: '$command_line_parse_message'!" unless $command_line_switch_parse_ok ;
+
+$asciio->setup($asciio_config->{SETUP_INI_FILE}, $asciio_config->{SETUP_PATH}) ;
 
 #-----------------------------------------------------------------------------
 

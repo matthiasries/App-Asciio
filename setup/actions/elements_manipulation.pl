@@ -15,13 +15,12 @@ register_action_handlers
 	'Move selected elements to the front' => ['C00-f', \&move_selected_elements_to_front],
 	'Move selected elements to the back' => ['C00-b', \&move_selected_elements_to_back],
 	
+	'Edit selected element' => ['000-Return', \&edit_selected_element],
+	
 	'Move selected elements left' => ['000-Left', \&move_selection_left],
 	'Move selected elements right' => ['000-Right', \&move_selection_right],
 	'Move selected elements up' => ['000-Up', \&move_selection_up],
 	'Move selected elements down' => ['000-Down', \&move_selection_down],
-	
-	'Change elements background color' => ['000-c', \&change_elements_colors, 0],
-	'Change elements foreground color' => ['00S-C', \&change_elements_colors, 1],
 	
 	'Change arrow direction' => ['000-d', \&change_arrow_direction],
 	'Flip arrow start and end' => ['000-f', \&flip_arrow_ends],
@@ -29,23 +28,39 @@ register_action_handlers
 	
 #----------------------------------------------------------------------------------------------
 
-sub change_elements_colors
+sub edit_selected_element
 {
-my ($self, $is_background) = @_ ;
+my ($self) = @_ ;
 
-my ($color) = $self->get_color_from_user([0, 0, 0]) ;
+my @selected_elements = $self->get_selected_elements(1) ;
 
-$self->create_undo_snapshot() ;
-
-for my $element($self->get_selected_elements(1))
+if(@selected_elements == 1)
 	{
-	$is_background
-		? $element->set_background_color($color) 
-		: $element->set_foreground_color($color) ;
-		
+	$self->create_undo_snapshot() ;
+	$self->edit_element($selected_elements[0]) ;
+	$self->update_display();
 	}
+}
+
+#----------------------------------------------------------------------------------------------
+
+sub change_arrow_direction
+{
+my ($self) = @_ ;
+
+my @elements_to_redirect =  grep {ref $_ eq 'App::Asciio::stripes::section_wirl_arrow'} $self->get_selected_elements(1) ;
+
+if(@elements_to_redirect)
+	{
+	$self->create_undo_snapshot() ;
 	
-$self->update_display() ;
+	for (@elements_to_redirect)
+                {
+                $_->change_section_direction($self->{MOUSE_X} - $_->{X}, $self->{MOUSE_Y} - $_->{Y}) ;
+                }
+		
+	$self->update_display()  ;
+	}
 }
 
 #----------------------------------------------------------------------------------------------
@@ -54,11 +69,14 @@ sub flip_arrow_ends
 {
 my ($self) = @_ ;
 
-my @elements_to_flip=  
+my @elements_to_flip =  
 	grep 
 		{
 		my @connectors = $_->get_connector_points() ; 
-		ref $_ eq 'App::Asciio::stripes::wirl_arrow' && @connectors > 0 ;
+		
+		      ref $_ eq 'App::Asciio::stripes::section_wirl_arrow'
+		&& $_->get_number_of_sections() == 1
+		&& @connectors > 0 ;
 		} $self->get_selected_elements(1) ;
 
 if(@elements_to_flip)
@@ -75,63 +93,42 @@ if(@elements_to_flip)
 		
 	for (@elements_to_flip)
 		{
-		# create one with ends swapped
-		my $new_direction = $_->{DIRECTION} ;
+                # create one with ends swapped
+		my $new_direction = $_->get_section_direction(0) ;
 		
-		if($new_direction =~ /(.*)-(.*)/)
+                if($new_direction =~ /(.*)-(.*)/)
+                        {
+                        my ($start_direction, $end_direction) = ($1, $2) ;
+                        $new_direction = $reverse_direction{$end_direction} . '-' . $reverse_direction{$start_direction} ;
+                        }
+		else
 			{
-			my ($start_direction, $end_direction) = ($1, $2) ;
-			$new_direction = $reverse_direction{$end_direction} . '-' . $reverse_direction{$start_direction} ;
+			$new_direction = $reverse_direction{$new_direction} ;
 			}
-				
-		use App::Asciio::stripes::wirl_arrow ;
-		my $arrow = new App::Asciio::stripes::wirl_arrow
-							({
-							%{$_},
-							END_X =>- $_->{END_X},
-							END_Y => - $_->{END_Y},
-							DIRECTION => $new_direction,
-							}) ;
+		
+		my ($start_connector, $end_connector) = $_->get_connector_points() ;
+		my $arrow = new App::Asciio::stripes::section_wirl_arrow
+						({
+						%{$_},
+						POINTS => 
+							[
+								[
+								- $end_connector->{X},
+								- $end_connector->{Y},
+								$new_direction,
+								]
+							],
+						DIRECTION => $new_direction,
+						}) ;
 		
 		#add new element, connects automatically
-		$self->add_element_at($arrow, $_->{X} + $_->{END_X}, $_->{Y} + $_->{END_Y}) ;
+		$self->add_element_at($arrow, $_->{X} + $end_connector->{X}, $_->{Y} + $end_connector->{Y}) ;
 		
-		# remove element
-		$self->delete_elements($_) ;
-		
-		# keep the element selected
-		$self->select_elements(1, $arrow) ;
-		}
-		
-	$self->update_display() ;
-	}
-}
+               # remove element
+                $self->delete_elements($_) ;
 
-#----------------------------------------------------------------------------------------------
-
-sub change_arrow_direction
-{
-my ($self) = @_ ;
-
-my @elements_to_redirect =  
-	grep 
-		{
-		my @connectors = $_->get_connector_points() ; 
-		ref $_ eq 'App::Asciio::stripes::wirl_arrow' && @connectors > 0 ;
-		} $self->get_selected_elements(1) ;
-
-if(@elements_to_redirect)
-	{
-	$self->create_undo_snapshot() ;
-	
-	for (@elements_to_redirect)
-		{
-		my $direction = $_->get_section_direction() ;
-		
-		if($direction =~ /(.*)-(.*)/)
-			{
-			$_->resize(0, 0, 0, 0, "$2-$1") ;
-			}
+                # keep the element selected
+                $self->select_elements(1, $arrow) ;
 		}
 		
 	$self->update_display() ;
@@ -256,11 +253,13 @@ $self->update_display() ;
 
 sub move_selection_left
 {
-my ($self) = @_ ;
+my ($self, $offset) = @_ ;
+
+$offset = 1 unless defined $offset ;
 
 $self->create_undo_snapshot() ;
 
-$self->move_elements(-1, 0, $self->get_selected_elements(1)) ;
+$self->move_elements(-$offset, 0, $self->get_selected_elements(1)) ;
 $self->update_display() ;
 } ;
 
@@ -268,11 +267,13 @@ $self->update_display() ;
 
 sub move_selection_right
 {
-my ($self) = @_ ;
+my ($self, $offset) = @_ ;
+
+$offset = 1 unless defined $offset ;
 
 $self->create_undo_snapshot() ;
 
-$self->move_elements(1, 0, $self->get_selected_elements(1)) ;
+$self->move_elements($offset, 0, $self->get_selected_elements(1)) ;
 $self->update_display() ;
 } ;
 
@@ -280,11 +281,13 @@ $self->update_display() ;
 
 sub move_selection_up
 {
-my ($self) = @_ ;
+my ($self, $offset) = @_ ;
+
+$offset = 1 unless defined $offset ;
 
 $self->create_undo_snapshot() ;
 
-$self->move_elements(0, -1, $self->get_selected_elements(1)) ;
+$self->move_elements(0, -$offset, $self->get_selected_elements(1)) ;
 $self->update_display() ;
 } ;
 
@@ -292,11 +295,13 @@ $self->update_display() ;
 
 sub move_selection_down
 {
-my ($self) = @_ ;
+my ($self, $offset) = @_ ;
+
+$offset = 1 unless defined $offset ;
 
 $self->create_undo_snapshot() ;
 
-$self->move_elements(0, 1, $self->get_selected_elements(1)) ;
+$self->move_elements(0, $offset, $self->get_selected_elements(1)) ;
 $self->update_display() ;
 } ;
 

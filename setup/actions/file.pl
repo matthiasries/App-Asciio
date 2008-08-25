@@ -68,6 +68,7 @@ if(defined $file_name && $file_name ne q[])
 	if($@)
 		{
 		$self->display_message_modal("Can't save file '$file_name':\n$@\n") ;
+		$file_name = undef ;
 		}
 	else
 		{
@@ -78,6 +79,8 @@ if(defined $file_name && $file_name ne q[])
 			}
 		}
 	}
+	
+return $file_name ;
 } ;
 
 

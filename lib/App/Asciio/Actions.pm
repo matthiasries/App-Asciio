@@ -29,10 +29,13 @@ my Readonly $ARGUMENTS = 2 ;
 my Readonly $CONTEXT_MENUE_SUB = 3 ;
 my Readonly $CONTEXT_MENUE_ARGUMENTS = 4 ;
 my Readonly $NAME= 5 ;
+my Readonly $ORIGIN= 6 ;
 
 sub run_actions
 {
 my ($self, @actions) = @_ ;
+
+my @results ;
 
 for my $action (@actions)
 	{
@@ -52,26 +55,34 @@ for my $action (@actions)
 			my $action_group_name = 
 				$self->{CURRENT_ACTIONS}{$action}{GROUP_NAME}  || 'unnamed action group' ;
 			
-			print "using action handlers group '$action_group_name'\n" ;
+			print "using action handlers group '$action_group_name'" 
+				. "[$self->{CURRENT_ACTIONS}{$action}{ORIGIN}].\n" ;
 			
 			$self->{CURRENT_ACTIONS} = $self->{CURRENT_ACTIONS}{$action} ;
 			}
 		else
 			{
-			print "Handling input '$modifiers + $action_key' with action '$self->{CURRENT_ACTIONS}{$action}[$NAME]'.\n" ;
+			print "Handling input '$modifiers + $action_key' with action '$self->{CURRENT_ACTIONS}{$action}[$NAME]'"
+				. "[$self->{CURRENT_ACTIONS}{$action}[$ORIGIN]].\n" ;
 			
 			if(defined $self->{CURRENT_ACTIONS}{$action}[$ARGUMENTS])
 				{
-				$self->{CURRENT_ACTIONS}{$action}[$CODE]->
-						(
-						$self,
-						$self->{CURRENT_ACTIONS}{$action}[$ARGUMENTS],
-						@arguments
-						) ;
+				push @results,
+					[
+					$self->{CURRENT_ACTIONS}{$action}[$CODE]->
+							(
+							$self,
+							$self->{CURRENT_ACTIONS}{$action}[$ARGUMENTS],
+							@arguments
+							) 
+					] ;
 				}
 			else
 				{
-				$self->{CURRENT_ACTIONS}{$action}[$CODE]->($self, @arguments) ;
+				push @results,
+					[
+					$self->{CURRENT_ACTIONS}{$action}[$CODE]->($self, @arguments)
+					] ;
 				}
 			}
 		}
@@ -81,6 +92,8 @@ for my $action (@actions)
 		$self->{CURRENT_ACTIONS} = $self->{ACTIONS} ;
 		}
 	}
+	
+return @results ;
 }
 
 #------------------------------------------------------------------------------------------------------
@@ -88,6 +101,7 @@ for my $action (@actions)
 sub run_actions_by_name
 {
 my ($self, @actions) = @_ ;
+my @results ;
 
 my $current_actions_by_name = $self->{ACTIONS_BY_NAME} ;
 
@@ -113,16 +127,22 @@ for my $action (@actions)
 			
 			if(defined $current_actions_by_name->{$action}[$ARGUMENTS])
 				{
-				$current_actions_by_name->{$action}[$CODE]->
-						(
-						$self,
-						$self->{CURRENT_ACTIONS}{$action}[$ARGUMENTS],
-						@arguments
-						) ;
+				push @results,
+					[
+					$current_actions_by_name->{$action}[$CODE]->
+							(
+							$self,
+							$self->{CURRENT_ACTIONS}{$action}[$ARGUMENTS],
+							@arguments
+							)
+					] ;
 				}
 			else
 				{
-				$current_actions_by_name->{$action}[$CODE]->($self, @arguments) ;
+				push @results,
+					[
+					$current_actions_by_name->{$action}[$CODE]->($self, @arguments)
+					] ;
 				}
 			}
 		}
@@ -132,6 +152,8 @@ for my $action (@actions)
 		last ;
 		}
 	}
+
+return @results ;
 }
 
 #------------------------------------------------------------------------------------------------------

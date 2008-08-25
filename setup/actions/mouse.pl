@@ -2,21 +2,21 @@
 use List::MoreUtils qw(any minmax first_value) ;
 use Readonly ;
 
-use App::Asciio::stripes::wirl_arrow ;
-
-#----------------------------------------------------------------------------------------------
-
-Readonly my $PREFERED_DIRECTION => 'right-down' ; # or 'down-right' ;
+use App::Asciio::stripes::section_wirl_arrow ;
 
 #----------------------------------------------------------------------------------------------
 
 register_action_handlers
 	(
-	'Quick link' => ['C0S-button_press', \&quick_link] ,
+	'Quick link' => ['C0S-button_press-1', \&quick_link] ,
 	#~ 'C00-button_release' => ['', ] ,
 	#~ 'C00-motion_notify' =>['', ] ,
 	) ;
 
+
+#----------------------------------------------------------------------------------------------
+
+Readonly my $PREFERED_DIRECTION => 'right-down' ; # or 'down-right' ;
 
 #----------------------------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ sub no_destination_element
 {
 my ($self, $x, $y) = @_ ;
 
-my $new_box = $self->add_new_element_named('thin_box', $x, $y) ;
+my $new_box = $self->add_new_element_named('stencils/asciio/box', $x, $y) ;
 connect_to_destination_element($self, $new_box, $x, $y) ;
 }
 
@@ -92,6 +92,8 @@ if(@destination_connections)
 				connect_from_arrow($self,  $element, $destination_element, $destination_connection) ;
 				}
 			}
+
+		$self->select_elements(1, @selected_elements) ;
 		}
 	else
 		{
@@ -108,19 +110,20 @@ sub connect_from_box
 {
 my ($self,  $element, $source_connection, $destination_element, $destination_connection) = @_ ;
 
-my $wirl_arrow = new App::Asciio::stripes::wirl_arrow
+my $wirl_arrow = new App::Asciio::stripes::section_wirl_arrow
 					({
-					END_X => (
-							    ($destination_element->{X} + $destination_connection->{X})
-							  - ($element->{X} + $source_connection->{X})
-							  ) ,
-							
-					END_Y => (
-							    ($destination_element->{Y} + $destination_connection->{Y})
-							 - ($element->{Y} + $source_connection->{Y})
-							 ) ,
-							 
-					DIRECTION => 'right-down',
+					POINTS => 
+					[
+						[
+						($destination_element->{X} + $destination_connection->{X})
+						 - ($element->{X} + $source_connection->{X}),
+								
+						($destination_element->{Y} + $destination_connection->{Y})
+						- ($element->{Y} + $source_connection->{Y}),
+						
+						$PREFERED_DIRECTION,
+						],
+					],		 
 					DIRECTION => $PREFERED_DIRECTION,
 					ALLOW_DIAGONAL_LINES => 0,
 					EDITABLE => 1,
@@ -137,7 +140,7 @@ $self->add_element_at_no_connection
 $self->add_connections
 	({
 	CONNECTED => $wirl_arrow,
-	CONNECTOR => $wirl_arrow->get_named_connection('start'),
+	CONNECTOR => $wirl_arrow->get_named_connection('startsection_0'),
 	CONNECTEE => $element,
 	CONNECTION => $source_connection,
 	}) ;
@@ -145,7 +148,7 @@ $self->add_connections
 $self->add_connections
 	({
 	CONNECTED => $wirl_arrow,
-	CONNECTOR => $wirl_arrow->get_named_connection('end'),
+	CONNECTOR => $wirl_arrow->get_named_connection('endsection_0'),
 	CONNECTEE => $destination_element,
 	CONNECTION => $destination_connection,
 	}) ;

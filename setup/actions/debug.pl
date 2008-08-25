@@ -26,6 +26,8 @@ local $self->{DO_STACK} = scalar(@{$self->{DO_STACK}})  . " [$size]";
 $self->show_dump_window($self, 'asciio') ;
 }
 
+#----------------------------------------------------------------------------------------------
+
 sub dump_selected_elements
 {
 my ($self) = @_ ;
@@ -33,6 +35,8 @@ my ($self) = @_ ;
 #~ print Data::TreeDumper::DumpTree [$self->get_selected_elements(1)] ;
 $self->show_dump_window([$self->get_selected_elements(1)], 'asciio selected elements') ;
 }
+
+#----------------------------------------------------------------------------------------------
 
 sub dump_all_elements
 {
@@ -48,8 +52,39 @@ sub test
 {
 my ($self) = @_ ;
 
-#~ print Data::TreeDumper::DumpTree $self, 'asciio', MAX_DEPTH => 2 ;
+$self->create_undo_snapshot() ;
 
-$self->test_diff() ;
+#~ use Text::FIGlet ;
+#~ my $font = Text::FIGlet->new(-f=>'doh');
+#~ my $font = Text::FIGlet->new(-d=>'/usr/share/figlet/');
+#~ my $output = $font->figify(-A=>"Test");
+
+#~ use App::Asciio::stripes::editable_box2 ;
+#~ my $new_element = new App::Asciio::stripes::editable_box2
+				#~ ({
+				#~ TEXT_ONLY => $output,
+				#~ TITLE => '',
+				#~ EDITABLE => 1,
+				#~ RESIZABLE => 1,
+				#~ }) ;
+
+#~ $self->add_element_at($new_element, $self->{MOUSE_X}, $self->{MOUSE_Y}) ;
+
+
+use App::Asciio::stripes::section_wirl_arrow ;
+my $new_element = new App::Asciio::stripes::section_wirl_arrow
+					({
+					POINTS => [[5, 5, 'downright']],
+					DIRECTION => '',
+					ALLOW_DIAGONAL_LINES => 0,
+					EDITABLE => 1,
+					RESIZABLE => 1,
+					NOT_CONNECTABLE_START => 1,
+					NOT_CONNECTABLE_END => 1,
+					}) ;
+					
+$self->add_element_at($new_element, $self->{MOUSE_X}, $self->{MOUSE_Y}) ;
+
+$self->update_display() ;
 }
 

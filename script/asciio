@@ -34,37 +34,22 @@ $hpaned->add1($asciio->{widget});
 $vbox->show_all();
 $window->show();
 
-$asciio->setup('setup/setup.ini') ;
+my ($command_line_switch_parse_ok, $command_line_parse_message, $asciio_config)
+	= $asciio->ParseSwitches([@ARGV], 0) ;
+
+die "Error: '$command_line_parse_message'!" unless $command_line_switch_parse_ok ;
+
+$asciio->setup($asciio_config->{SETUP_INI_FILE}, $asciio_config->{SETUP_PATH}) ;
 
 my ($character_width, $character_height) = $asciio->get_character_size() ;
 
-if(defined $ARGV[0])
+if(defined $asciio_config->{TARGETS}[0])
 	{
-	use Gtk2::Gdk::Keysyms ;
-	my %K = %Gtk2::Gdk::Keysyms ;
-
-	$asciio->run_actions_by_name(["Open", $ARGV[0]]) ;
-	$asciio->set_modified_state(0) ;
+	$asciio->run_actions_by_name(['Open', $asciio_config->{TARGETS}[0]]) ;
 	}
-else
-	{
-	$asciio->add_ruler_lines(
-		{
-		TYPE => 'VERTICAL',
-		COLOR => [220, 200, 200],
-		POSITION => 80,
-		NAME => 'RIGHT_LIMIT',
-		},
-		
-		{
-		TYPE => 'HORIZONTAL',
-		COLOR => [220, 200, 200],
-		POSITION => 50,
-		NAME => 'BOTTOM_LIMIT',
-		},) ;
-		
-	$asciio->set_modified_state(0) ;
-	}
+	
+$asciio->set_modified_state(0) ;
+$asciio->run_script($asciio_config->{SCRIPT}) ;
 	
 #--------------------------------------------------------------------------
 
@@ -83,10 +68,20 @@ for my $asciio (@{$asciios})
 	
 if($should_save) 
 	{
-	$answer = App::Asciio::display_quit_dialog($window, 'asciio', ' ' x 25 . "Document is modified!\n\n\nAre you sure you want to quit and loose your changes?") ;
+	$answer = App::Asciio::display_quit_dialog($window, 'asciio', ' ' x 25 . "Document is modified!\n\nAre you sure you want to quit and loose your changes?\n") ;
 	}
 	
-return $answer eq 'no';
+if($answer eq 'save_and_quit')
+	{
+	for my $asciio (@{$asciios})
+		{
+		my @saved_result = $asciio->run_actions_by_name('Save') ;
+		
+		$answer = 'cancel' if(! defined $saved_result[0][0] || $saved_result[0][0] eq '') ;
+		}
+	}
+	
+return $answer eq 'cancel';
 }
 
 #--------------------------------------------------------------------------

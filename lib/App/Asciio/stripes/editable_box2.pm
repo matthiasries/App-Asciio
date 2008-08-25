@@ -34,6 +34,7 @@ $self->setup
 	1, 1,
 	$element_definition->{RESIZABLE},
 	$element_definition->{EDITABLE},
+	$element_definition->{AUTO_SHRINK},
 	) ;
 
 return $self ;
@@ -43,7 +44,7 @@ return $self ;
 
 sub setup
 {
-my ($self, $text_only, $title_text, $box_type, $end_x, $end_y, $resizable, $editable) = @_ ;
+my ($self, $text_only, $title_text, $box_type, $end_x, $end_y, $resizable, $editable, $auto_shrink) = @_ ;
 
 my ($text_width,  @lines) = (0) ;
 
@@ -55,6 +56,8 @@ for my $line (split("\n", $text_only))
 	
 my ($title_width,  @title_lines) = (0) ;
 
+$title_text = '' unless defined $title_text ;
+
 for my $title_line (split("\n", $title_text))
 	{
 	$title_width  = max($title_width, length($title_line)) ;
@@ -65,6 +68,11 @@ my ($extra_width, $extra_height) = get_box_frame_size_overhead($box_type) ;
 
 my $display_title = (defined $title_text and $title_text ne '') ? 1 : 0 ;
 $text_width  = max($text_width, $title_width)  if $display_title;
+
+if($auto_shrink)
+	{
+	($end_x, $end_y) = (-5, -5) ;
+	}
 
 $end_x = max($end_x, $text_width + $extra_width, $title_width + $extra_width) ;
 $end_y = max($end_y, scalar(@lines) + $extra_height + scalar(@title_lines)) ;
@@ -157,8 +165,8 @@ if($box_type->[$TOP][$DISPLAY])
 			. "\n" ;
 	}
 	
-$title_left = $box_type->[$TITLE_SEPARATOR][$LEFT] ;
-$title_right = $box_type->[$TITLE_SEPARATOR][$RIGHT] ;
+$title_left = $box_type->[$TITLE_SEPARATOR][$LEFT] if($box_type->[$BODY_SEPARATOR][$DISPLAY]) ;
+$title_right = $box_type->[$TITLE_SEPARATOR][$RIGHT] if($box_type->[$BODY_SEPARATOR][$DISPLAY]) ;
 
 if($box_type->[$TITLE_SEPARATOR][$DISPLAY])
 	{
@@ -235,6 +243,10 @@ elsif($x >= 0 && $x < $self->{WIDTH} && $y >= 0 && $y < $self->{HEIGHT})
 	{
 	return {X =>  $middle_width, Y => -1, NAME => 'to_be_optimized'} ;
 	}
+elsif($self->{ALLOW_BORDER_CONNECTION} && $x >= -1 && $x <= $self->{WIDTH} && $y >= -1 && $y <= $self->{HEIGHT})
+	{
+	return {X =>  $x, Y => $y, NAME => 'border'} ;
+	}
 else
 	{
 	return ;
@@ -264,7 +276,7 @@ sub get_extra_points
 {
 my ($self) = @_ ;
 
-if($self->{RESIZABLE})
+if($self->{RESIZABLE} && ! $self->is_auto_shrink())
 	{
 	return {X =>  $self->{WIDTH} - 1, Y => $self->{HEIGHT} - 1, NAME => 'resize'} ;
 	}
@@ -306,6 +318,39 @@ else
 
 #-----------------------------------------------------------------------------
 
+sub allow_border_connection
+{
+my($self, $allow) = @_ ;
+
+$self->{ALLOW_BORDER_CONNECTION} = $allow ;
+}
+
+#-----------------------------------------------------------------------------
+
+sub is_border_connection_allowed
+{
+my($self) = @_ ;
+return $self->{ALLOW_BORDER_CONNECTION} ;
+}
+
+#-----------------------------------------------------------------------------
+
+sub flip_auto_shrink
+{
+my($self) = @_ ;
+$self->{AUTO_SHRINK} ^= 1 ;
+}
+
+#-----------------------------------------------------------------------------
+
+sub is_auto_shrink
+{
+my($self) = @_ ;
+return $self->{AUTO_SHRINK} ;
+}
+
+#-----------------------------------------------------------------------------
+
 sub resize
 {
 my ($self, $reference_x, $reference_y, $new_x, $new_y) = @_ ;
@@ -317,7 +362,17 @@ my $new_end_y = $new_y ;
 
 if($new_end_x >= 0 &&  $new_end_y >= 0)
 	{
-	$self->setup($self->{TEXT_ONLY}, $self->{TITLE}, $self->{BOX_TYPE}, $new_end_x + 1, $new_end_y + 1, $self->{RESIZABLE}, $self->{EDITABLE}) ;
+	$self->setup
+		(
+		$self->{TEXT_ONLY},
+		$self->{TITLE},
+		$self->{BOX_TYPE},
+		$new_end_x + 1,
+		$new_end_y + 1,
+		$self->{RESIZABLE},
+		$self->{EDITABLE},
+		$self->{AUTO_SHRINK},
+		) ;
 	}
 	
 return(0, 0, $self->{WIDTH}, $self->{HEIGHT}) ;
@@ -340,7 +395,17 @@ my ($self, $title, $text) = @_ ;
 my @displayed_elements = grep { $_->[$DISPLAY] } @{$self->{BOX_TYPE}} ;
 $text = 'edit_me' if($text eq '' && @displayed_elements == 0) ;
 
-$self->setup($text, $title, $self->{BOX_TYPE}, $self->{WIDTH}, $self->{HEIGHT}, $self->{RESIZABLE}, $self->{EDITABLE}) ;
+$self->setup
+	(
+	$text,
+	$title,
+	$self->{BOX_TYPE},
+	$self->{WIDTH},
+	$self->{HEIGHT},
+	$self->{RESIZABLE},
+	$self->{EDITABLE},
+	$self->{AUTO_SHRINK},
+	) ;
 }
 
 #-----------------------------------------------------------------------------
@@ -356,7 +421,17 @@ return($self->{BOX_TYPE})  ;
 sub set_box_type
 {
 my ($self, $box_type) = @_ ;
-$self->setup($self->{TEXT_ONLY}, $self->{TITLE}, $box_type, $self->{WIDTH}, $self->{HEIGHT}, $self->{RESIZABLE}, $self->{EDITABLE}) ;
+$self->setup
+	(
+	$self->{TEXT_ONLY},
+	$self->{TITLE},
+	$box_type,
+	$self->{WIDTH},
+	$self->{HEIGHT},
+	$self->{RESIZABLE},
+	$self->{EDITABLE},
+	$self->{AUTO_SHRINK},
+	) ;
 }
 
 #-----------------------------------------------------------------------------
@@ -367,13 +442,89 @@ my ($self) = @_ ;
 
 return unless $self->{EDITABLE} ;
 
-my ($text, $title) = App::Asciio::display_box_edit_dialog($self->{BOX_TYPE}, $self->{TITLE}, $self->{TEXT_ONLY}) ;
+my $text = $self->{TEXT_ONLY} ;
+$text = make_vertical_text($text)  if $self->{VERTICAL_TEXT} ;
+
+($text, my $title) = App::Asciio::display_box_edit_dialog($self->{BOX_TYPE}, $self->{TITLE}, $text) ;
 
 my $tab_as_space = $self->{TAB_AS_SPACES} || (' ' x 3) ;
+
 $text =~ s/\t/$tab_as_space/g ;
 $title=~ s/\t/$tab_as_space/g ;
 
+$text = make_vertical_text($text) if $self->{VERTICAL_TEXT} ;
+	
 $self->set_text($title, $text) ;
+}
+
+#-----------------------------------------------------------------------------
+
+sub rotate_text
+{
+my ($self) = @_ ;
+
+my $text = make_vertical_text($self->{TEXT_ONLY})  ;
+	
+$self->set_text($self->{TITLE}, $text) ;
+$self->shrink() ;
+
+$self->{VERTICAL_TEXT} ^= 1 ;
+}
+
+#-----------------------------------------------------------------------------
+
+sub shrink
+{
+my ($self) = @_ ;
+$self->setup
+	(
+	$self->{TEXT_ONLY},
+	$self->{TITLE},
+	$self->{BOX_TYPE},
+	-5,
+	-5,
+	$self->{RESIZABLE},
+	$self->{EDITABLE},
+	$self->{AUTO_SHRINK},
+	) ;
+}
+
+#-----------------------------------------------------------------------------
+
+sub make_vertical_text
+{
+my ($text) = @_ ;
+
+my @lines = map{[split '', $_]} split "\n", $text ;
+
+my $vertical = '' ;
+my $found_character = 1 ;
+my $index = 0 ;
+
+while($found_character)
+	{
+	my $line ;
+	$found_character = 0 ;
+	
+	for(@lines)
+		{
+		if(defined $_->[$index])
+			{
+			$line.= $_->[$index] ;
+			$found_character++ ;
+			}
+		else
+			{
+			$line .= ' ' ;
+			}
+		}
+	
+	$line =~ s/\s+$//; 
+	$vertical .= "$line\n" if $found_character ;
+	$index++ ;
+	}
+
+return $vertical ;
 }
 
 #-----------------------------------------------------------------------------

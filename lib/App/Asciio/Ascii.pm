@@ -10,20 +10,22 @@ use warnings;
 
 sub transform_elements_to_ascii_buffer
 {
-my ($self)  = @_ ;
+my ($self, @elements)  = @_ ;
 
-return(join("\n", $self->transform_elements_to_ascii_array()) . "\n") ;
+return(join("\n", $self->transform_elements_to_ascii_array(@elements)) . "\n") ;
 }
 
 #-----------------------------------------------------------------------------
 
 sub transform_elements_to_ascii_array
 {
-my ($self)  = @_ ;
+my ($self, @elements)  = @_ ;
+
+@elements = @{$self->{ELEMENTS}} unless @elements ;
 
 my @lines ;
 
-for my $element (@{$self->{ELEMENTS}})
+for my $element (@elements)
 	{
 	for my $strip ($element->get_mask_and_element_stripes())
 		{

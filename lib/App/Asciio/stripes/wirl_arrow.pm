@@ -59,7 +59,7 @@ sub setup
 {
 my ($self, $arrow_type, $end_x, $end_y, $direction, $allow_diagonal_lines, $editable) = @_ ;
 
-my ($stripes, $width, $height, $x_offset, $y_offset) ;
+my ($stripes, $width, $height) ;
 
 ($stripes, $width, $height, $direction) = get_arrow($arrow_type, $end_x, $end_y, $direction, $allow_diagonal_lines) ;
 
@@ -72,6 +72,7 @@ $self->set
 	ARROW_TYPE => $arrow_type,
 	END_X => $end_x,
 	END_Y => $end_y,
+	ALLOW_DIAGONAL_LINES => $allow_diagonal_lines,
 	) ;
 }
 
@@ -805,7 +806,7 @@ my $window = new Gtk2::Window() ;
 
 my $dialog = Gtk2::Dialog->new('Arrow attributes', $window, 'destroy-with-parent')  ;
 $dialog->set_default_size (450, 505);
-$dialog->add_button ('gtk-close' => 'close');
+$dialog->add_button ('gtk-ok' => 'ok');
 
 #~ my $vbox = $dialog->vbox ;
 my $dialog_vbox = $dialog->vbox ;

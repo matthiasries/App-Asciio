@@ -39,8 +39,14 @@ my ($connections) = @_ ;
 
 for my $connection (@{$connections})
 	{
-	reconnect_wirl_arrow($connection) if(ref $connection->{CONNECTED} eq 'App::Asciio::stripes::wirl_arrow') ;
-	reconnect_section_wirl_arrow($connection) if(ref $connection->{CONNECTED} eq 'App::Asciio::stripes::section_wirl_arrow') ;
+	if
+		(
+		ref $connection->{CONNECTED} eq 'App::Asciio::stripes::section_wirl_arrow'
+		&& $connection->{CONNECTED}->is_autoconnect_enabled()
+		)
+		{
+		reconnect_section_wirl_arrow($connection)  ;
+		}
 	}
 }
 
@@ -202,158 +208,6 @@ else
 		else
 			{
 			reconnect($connection, 'right_center', $start_name) ;
-			}
-		}
-	}
-}
-
-sub reconnect_wirl_arrow
-{
-my ($connection) = @_ ;
-
-my ($connected, $connectee) = ($connection->{CONNECTED},  $connection->{CONNECTEE}) ;
-my ($connectee_width, $connectee_hight) = $connectee->get_size() ;
-
-if($connection->{CONNECTOR}{NAME} eq 'end')
-	{	
-	if($connected->{X} < $connectee->{X})
-		{
-		# arrow starts on left of the box
-		if($connection->{CONNECTED}{DIRECTION} =~ /^right/)
-			{
-			if($connected->{Y} < $connectee->{Y})
-				{
-				reconnect($connection, 'top_center', 'end') ;
-				}
-			else
-				{
-				if($connected->{Y} < $connectee->{Y} + $connectee_hight)
-					{
-					reconnect($connection, 'left_center', 'end') ;
-					}
-				else
-					{
-					# arrow below, right-up to bottom_center
-					reconnect($connection, 'bottom_center', 'end') ;
-					}
-				}
-			}
-		else
-			{
-			# arrow going up or down
-			reconnect($connection, 'left_center', 'end') ;
-			}
-		}
-	elsif($connected->{X} < $connectee->{X} + $connectee_width)
-		{
-		# arrow starts within width of the box
-		if($connected->{Y} < $connectee->{Y})
-			{
-			#arrow above, right-down to top_center
-			reconnect($connection, 'top_center', 'end', 'right') ;
-			}
-		else
-			{
-			reconnect($connection, 'bottom_center', 'end') ;
-			}
-		}
-	else
-		{
-		# arrow starts on right of the box
-		if($connection->{CONNECTED}{DIRECTION} =~ /^left/)
-			{
-			if($connected->{Y} < $connectee->{Y})
-				{
-				reconnect($connection, 'top_center', 'end') ;
-				}
-			else
-				{
-				if($connected->{Y} < $connectee->{Y} + $connectee_hight)
-					{
-					reconnect($connection, 'right_center', 'end') ;
-					}
-				else
-					{
-					reconnect($connection, 'bottom_center', 'end') ;
-					}
-				}
-			}
-		else
-			{
-			# arrow going up or down
-			reconnect($connection, 'right_center', 'end') ;
-			}
-		}
-	}
-else
-	{
-	# start connector
-	my ($end_connector) = $connected->get_named_connection('end') ;
-	my $end_connector_x = $connected->{X} + $end_connector->{X} ;
-	my $end_connector_y = $connected->{Y} + $end_connector->{Y}  ;
-	
-	if($end_connector_x < $connectee->{X})
-		{
-		# arrow ends on left of the box
-		if($connection->{CONNECTED}{DIRECTION} !~ /^left/)
-			{
-			if($end_connector_y < $connectee->{Y})
-				{
-				reconnect($connection, 'top_center', 'start') ;
-				}
-			else
-				{
-				if($end_connector_y < $connectee->{Y} + $connectee_hight)
-					{
-					reconnect($connection, 'left_center', 'start') ;
-					}
-				else
-					{
-					reconnect($connection, 'bottom_center', 'start') ;
-					}
-				}
-			}
-		else
-			{
-			reconnect($connection, 'left_center', 'start') ;
-			}
-		}
-	elsif($end_connector_x < $connectee->{X} + $connectee_width)
-		{
-		# arrow starts within width of the box
-		if($end_connector_y < $connectee->{Y})
-			{
-			reconnect($connection, 'top_center', 'start') ;
-			}
-		else
-			{
-			reconnect($connection, 'bottom_center', 'start') ;
-			}
-		}
-	else
-		{
-		# arrow ends on right of the box
-		if($connection->{CONNECTED}{DIRECTION} !~ /^right/)
-			{
-			if($end_connector_y < $connectee->{Y})
-				{
-				reconnect($connection, 'top_center', 'start') ;
-				}
-			else
-				{
-				if($end_connector_y < $connectee->{Y} + $connectee_hight)
-					{
-					reconnect($connection, 'right_center', 'start') ;
-					}
-				else
-					{
-					reconnect($connection, 'bottom_center', 'start') ;
-					}
-				}
-			}
-		else
-			{
-			reconnect($connection, 'right_center', 'start') ;
 			}
 		}
 	}

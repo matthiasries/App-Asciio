@@ -2,68 +2,301 @@
 # This is the todo.txt #
 #----------------------#
 
-screencast demo
+? shortcut to display popup menue
 
-remove single wirl arrow object
-	=> a connection error occures when using a multiple wirl object with a single wirl
-		write a test where two boxes are connected with one type of arrow
-		and two other boxes with the other type of arrow, move the boxes around and 
-		compare the display
+shift + click should deselect the object under the cursor
 
-*** unhandled exception in callback:
-***   Modification of non-creatable array value attempted, subscript -1 at lib/gpad_undo.pm line 115.
-***  ignoring at ./gpad.pl line 95.
-Use of uninitialized value in numeric eq (==) at lib/gpad.pm line 521.
-Use of uninitialized value in numeric eq (==) at lib/gpad.pm line 521.
+Error: previously saved files (network) do not load new stencils
 
-add easy way, through a shortcut,  to:
-	change arrow type
-		dots, equal, star, ...
-	make an arrow a muti wirl arow
-		=> use only multi wirl arrow
-	#box a text
-	#change box type
+connected, non auto-connect, arrows loose their connection if the connectee is resized
+	=> this is because resize doesn't keep the connection. The 
+		canonizer reconnects elements but non auto-connect objects are not handled by the canonizer
+		
+		=> make canonizer re connect to the same place instead for changing the connector
+		
+magnet object for ESD
 
-Selection rectangle that just takes boxes
+reload color options after loading file
+	display_grid + element_backgound_color
+	
+search for stripe class in the setup directory
+	or list the directories in the setup
+	or add the directory as setup data and 'use lib'
+	
+let actions load stencils
+
+forward KB + mouse events to stripes objects
+	
+autoconnect can change the direction of the arrow
+            .---------.           .---------.
+     ------.|         |    |      |         |
+           ||         |    |      |         |
+           v|         |    '----->|         |
+            |         |           |         |
+            |         |           |         |
+            '---------'           '---------'
+
+table object
+	bulleted lists and otherwise formatted text
+
+record box object
+
+save as pdf and printing
+
+more than one resize handle
+
+resize the selected element if any not the top most 
+
+zoom on pointer
+	#not ctl to zoom
+	panning
+	
+autosave
+
+merge arrows
+
+connector grouping
+
+multi-ended connectors
+
+add remove end from multi ended connectors
+
+vocabulary list
+
+save window size in file
+
+cancel button in editing windows
+
+transparancy mask vs stripes
+	can we automatically generate stripes
+
+let user query which keyboard shortcut is still free
+	generate a list instead (with links to existing actions and their files)
+	
+handle unicode (remove write_file)
+
+update documentation
+
+error: changing arrow type changed the directions of sections
+
+auto routing
+
+now arrow can match inside a box, moving an arrow around has become more tricky
+	=> do not connect if both ends are unconnected and arrow is being moved
+
+move gtk dialog from stripe classes
 
 move action constants to module
 
-connections connected to a start and an end connector are displayed with warning color
-	move to display plugins
-
-multi wirl extension as if we were drawing the arrow
-	when the mouse takes a turn, a wirl point is added
-	
 optimize do_stack serialization
 	# use bzip2
 	=> diff + compress
 		# tests done
 		must have a reverse diff that can patch both ways or it's not worth it
 		
-now arrow can match inside a box, moving an arrow around has become more tricky
-	=> do not connect if both ends are unconnected and arrow is being moved
+Management mode
+	=> make ascii look like not ascii
+		=> use ANSI X3.64
+		
+connections connected to a start and an end connector are displayed with warning color
+	move to display plugins
+	=> how do we handle double pointed arrows?
+
+#------------------- done ----------------------------
+
+#auto resize after text changes?
+	auto resize as an attribute to the box
+
+# selection that doesn't take arrows
 	
-dialogs
-	button missing icons
-	assign ctl + enter as OK in edit boxes
+! move to
+	row column
+	named ruler
+
+#save stencil one by one
+	=> give name to objects => save selected to stencils
+
+#stencil directory
+	#if a directory is listed in the stencil section of the setup file,
+		all the stencils in that directory are loaded
+		
+	#directory name should be added to the element name
+	
+	#ASCII in the context menue should be replaced by stencils or whatever directory is the root
+
+#network stencils
+	missing small wireless
+
+#auto stencil
+	stencils are 'run' this means that they can be created from other data
+	
+#remove section at the begining of the arrow
+	
+#add section at the begining of the arrow
+	=> auto connection works but moving the connected object -> error
+
+#dialogs
+	#button missing icons
+	!assign ctl + enter as OK in edit boxes
 		=> alt + C
 
-   .----------------------------------.
-   | X|O|  Box Attributes        |_|x |
-   |----------------------------------|
-   |.--------------------------------.|
-   || edit area                      ||
-   ||                                ||
-   ||                                ||
-   |'--------------------------------'|
-   |                    .------------.|
-   |                    | |X| _Close || <------.
-   |                    '------------'|        |
-   '----------------------------------'        |
-                                               |
-                                               |
-                         $dialog->add_button ('gtk-close' => 'close');
+#vertical text
+	
+!signing objects and diagrams?
 
+#toggle grid
+
+#text object should be resized to the text size when created
+
+#allow non auto-connect to be one character around the object instead for _on_ the object
+	=> this could be handled by the box object
+		- the box object is asked to match a connector
+		- the box object can dynamically create a connector
+		- if the box object is resized, the connectors can be moved
+			the connectors can remember their position if the
+			box object is resized again
+		- new connection should connect new connectors
+			=> we need to know who we are connecting to
+
+	=> or this could be done by the asciio object
+		- asciio asks the box to add a connection
+			this let ascioo decide where they should be placed instead for 
+			deciding it's around the box
+		- the user can add connectors with the same mechanism
+		- the connector must be handled when resizing the box object
+			by the box object or by the connector itself
+
+#Box added via 'B' shortcut should be selected
+
+#reselect elements after quick link
+
+#select text an focus in text editing window
+
+#error: title has frame when text doesn't
+
+#link to camel box
+
+#background color, grid color
+
+#save file in exit dialog
+
+#continuation _from_ diagonal is not correct
+
+!allow diagonals in setup
+
+#diagonal lines
+	#error: connector character is wrong
+	#dynamically choose if the arrow allows diagonal or not (keyboard)
+
+#handle error when running external command
+	Can't exec "dsq": No such file or directory at '/devel/perl_modules/App/Asciio/blib/lib/App/Asciio/setup//actions/unsorted.pl' line 365.
+	Use of uninitialized value in split at /devel/perl_modules/App/Asciio/blib/lib/App/Asciio/stripes/editable_box2.pm line 50.
+
+#paste at the mouse position
+	
+#per arrow autoconnect
+
+#dynamically add connectors
+
+#copy selected elements to clipboard
+	
+#move ruler line definition to the setup
+	allow removal of rulers
+	allow specific location of rulers
+
+#dynamically generate GROUP_COLORS
+
+#figlet support
+	Done via external command 
+	Emanuel Haupt <ehaupt@freebsd.org>
+	Useless use of a constant in void context at /usr/lib64/perl5/site_perl/5.8.8/Text/FIGlet.pm line 177.
+	
+	hundreds of :
+	Use of uninitialized value in substitution (s///) at /usr/lib64/perl5/site_perl/5.8.8/Text/FIGlet.pm line 93.
+	Use of uninitialized value in concatenation (.) or string at /usr/lib64/perl5/site_perl/5.8.8/Text/FIGlet.pm line 95.
+	Use of uninitialized value in string ne at /usr/lib64/perl5/site_perl/5.8.8/Text/FIGlet.pm line 154.
+	Use of uninitialized value in string eq at /usr/lib64/perl5/site_perl/5.8.8/Text/FIGlet.pm line 163.
+	Use of uninitialized value in string ne at /usr/lib64/perl5/site_perl/5.8.8/Text/FIGlet.pm line 200.
+	
+#non connecting section wirl arrows
+
+#external command output
+	Emanuel Haupt <ehaupt@freebsd.org>
+
+#screencast demo
+
+#remove section
+
+#export png
+
+#possibility to close the application from a script
+
+#return edits the currently selected box
+
+#error: targets are not opened
+
+#register_action_handlers return own data not the evaled package
+
+#script to generate a list of the actions available
+
+#error: |------------>
+
+#error: moving connectors on each other bugs the connector size
+	only when end connector is backed over start connector
+
+#error: multi wirl inter-sections overlays should be taken from the arrow definition
+     #      .####
+     |      #
+     #####-##
+
+#direction change should work on any arrow section
+
+#error: Add section keeps connection
+#error: Add section doesn't connect
+
+# multi wirl extension as if we were drawing the arrow
+	when the mouse takes a turn, a wirl point is added
+	=> or add section when clicked
+	
+#Add section to cursor position
+
+#add easy way, through a shortcut,  to:
+	#change arrow type
+		dots, equal, star, ...
+	!make an arrow a muti wirl arow
+		=> use only multi wirl arrow
+	#box a text
+	#change box type
+
+# keep selection mode
+	selected ==  index not boolean
+	
+#display action definition file
+
+#Remove single wirl arrow object
+	#=> a connection error occures when using a multiple wirl object with a single wirl
+		write a test where two boxes are connected with one type of arrow
+		and two other boxes with the other type of arrow, move the boxes around and 
+		compare the display
+		
+	# flip broken
+	#change direction broken
+	
+	#test scripting lib
+
+#scripting lib difficult to locate
+	=> -Mblib broken too
+		ADDED: option parsing
+		
+#multi level action do not work anymore
+
+#contex menu box has errors
+	Use of uninitialized value in numeric lt (<) at '/devel/perl_modules/App/Asciio/blib/lib/App/Asciio/setup//actions/context_menu_box.pl' line 118.
+	Use of uninitialized value in array element at '/devel/perl_modules/App/Asciio/blib/lib/App/Asciio/setup//actions/context_menu_box.pl' line 120.
+
+#parse switches
+
+#setup path
 
 #file name is not remembered on, first Save As
 	! not kept in the undo buffer

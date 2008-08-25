@@ -26,67 +26,16 @@ my ($self, $event) = @_;
 
 my ($popup_x, $popup_y) = $event->coords() ;
 
-my @menu_items = 
-	(
-	[ '/_ASCII'               , undef         , undef           , 0 , '<Branch>' ],
-
-	[ '/Ruler line/Vertical' , undef  , 
-		sub{
-			$self->add_ruler_lines(
-				{
-				TYPE => 'VERTICAL',
-				COLOR => $self->{COLORS}{ruler_line},
-				POSITION => $self->pixel_to_character_x($popup_x),
-				NAME => 'FROM_MENU',
-				}) ;
-			$self->update_display();
-			} ,
-		0 , '<Item>', undef ],
-		
-	[ '/Ruler line/Horizontal' , undef  , 
-		sub
-			{
-			$self->add_ruler_lines(
-				{
-				TYPE => 'HORIZONTAL',
-				COLOR => $self->{COLORS}{ruler_line},
-				POSITION => $self->pixel_to_character_y($popup_y),
-				NAME => 'FROM_MENU',
-				}) ;
-			$self->update_display();
-			} ,
-		0 , '<Item>', undef ],
-		
-	[ '/File/Open', undef ,
-		sub
-			{
-			$self->run_actions_by_name("Open") ;
-			}
-		, 0 , '<Item>', undef ],
-		
-	[ '/File/Save', undef ,
-		sub
-			{
-			$self->run_actions_by_name("Save") ;
-			}
-		, 0 , '<Item>', undef ],
-
-	[ '/File/SaveAs', undef ,
-		sub
-			{
-			$self->run_actions_by_name(['Save', 1]) ;
-			}
-		, 0 , '<Item>', undef ],
-	) ;
+my @menu_items ;
 
 for my $element (@{$self->{ELEMENT_TYPES}})
 	{
 	(my $name_with_underscore = $element->{NAME}) =~ s/_/__/g ;
 	
 	push @menu_items, 
-		[ "/ASCII/$name_with_underscore", undef , insert_generator($self, $element, $popup_x, $popup_y), 0 , '<Item>', undef],
+		[ "/$name_with_underscore", undef , insert_generator($self, $element, $popup_x, $popup_y), 0 , '<Item>', undef],
 	}
-		
+
 for my $menu_entry (@{$self->get_context_menu_entries($popup_x, $popup_y)})
 	{
 	my($name, $sub, $data) = @{$menu_entry} ;
@@ -94,6 +43,18 @@ for my $menu_entry (@{$self->get_context_menu_entries($popup_x, $popup_y)})
 	
 	push @menu_items, [ $name_with_underscore, undef , $self->menue_entry_wrapper($sub, $data), 0, '<Item>', undef],
 	}
+
+push @menu_items, 
+	(
+	['/File/open', undef , sub {$self->run_actions_by_name('Open') ;}, 0 , '<Item>', undef],
+	['/File/save', undef , sub {$self->run_actions_by_name('Save') ;}, 0 , '<Item>', undef],
+	[ '/File/save as', undef , sub {$self->run_actions_by_name(['Save', 1]) ;}, 0 , '<Item>', undef],
+	) ;
+	
+if($self->get_selected_elements(1) == 1)
+	{
+	push @menu_items, [ '/File/save stencil', undef , $self->menue_entry_wrapper(\&save_stencil), 0 , '<Item>', undef ] ;
+	}	
 
 my $item_factory = Gtk2::ItemFactory->new("Gtk2::Menu" ,"<popup>") ;
 $item_factory ->create_items($self->{widget}, @menu_items) ;

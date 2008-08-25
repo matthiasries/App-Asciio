@@ -26,29 +26,30 @@ use App::Asciio::Actions ;
 use App::Asciio::Undo ;
 use App::Asciio::Io ;
 use App::Asciio::Ascii ;
+use App::Asciio::Options ;
 
 #-----------------------------------------------------------------------------
 
-our $VERSION = '0.94' ;
+our $VERSION = '1.00' ;
 
 #-----------------------------------------------------------------------------
 
 =head1 NAME 
 
- Asciio - Plain ASCII diagram
+ AsciiO - Plain ASCII diagram
 
 	                  |     |             |       |
 	          |       |     |      |      |       |
 	          |       |     |      |      |       |
 	          v       |     v      |      v       |
 	                  v            v              v
-		 ______                          _____      
-		/\  _  \                  __  __/\  __`\    
-		\ \ \L\ \    ____    ___ /\_\/\_\ \ \/\ \   
-	----->	 \ \  __ \  /',__\  /'___\/\ \/\ \ \ \ \ \  ----->
-		  \ \ \/\ \/\__, `\/\ \__/\ \ \ \ \ \ \_\ \ 
-		   \ \_\ \_\/\____/\ \____\\ \_\ \_\ \_____\
-		    \/_/\/_/\/___/  \/____/ \/_/\/_/\/_____/
+		 _____                           _____      
+		/\  _  \                        /\  __ \    
+		\ \ \_\ \    ___     ___   _   _\ \ \ \ \   
+	----->	 \ \  __ \  /  __\  / ___\/\ \/\ \ \ \ \ \  ----->
+		  \ \ \ \ \/\__,  \/\ \___' \ \ \ \ \ \_\ \ 
+		   \ \_\ \_\/\____/\ \____/\ \_\ \_\ \_____\
+		    \/_/\/_/\/___/  \/___/  \/_/\/_/\/_____/
 	
 	          |             |             |     |
 	          |     |       |     |       |     |      |
@@ -71,49 +72,38 @@ application. The ASCII graphs can be saved as ASCII or in a format that allows y
 
 Thanks to all the Perl-QA hackathon 2008 in Oslo for pushing me to do an early release.
 
-Special thanks go to Gábor Szabó for his help and advices. Adam Kennedy coined the cool name.
+Special thanks go to the Muppet and the gtk-perl group, Gábor Szabó for his help and advices.
+
+Adam Kennedy coined the cool name.
 
 Sometimes a diagram is worth a lot of text in a source code file. It has always been painfull to do 
-ASCII diagrams by hand. The simple example below comes from a module I wrote a few years ago. I remember
-cursing a few times then I tried to draw the graph in a program made for non ASCII diagrams and convert
-the XML output to ASCII. That still didn't work so nicely. A diagram as simple as the one below can take a 
-lot of time, specially if you have to modify it.
+ASCII diagrams by hand. 
 
 =head1 DOCUMENTATION
 
-=head2 asciio user interface
+=head2 Asciio user interface
 
 	
-          default elements in an empty diagram
-                    .------------------------.
-                    |               |        |
-                    |               |        |
-            .-------|---------------|--------|------------------------------------------.
-            |       |               |        |  asciio                                  |
-            |-------|---------------|--------|------------------------------------------|
-            | ......v---------......v........v......................................... |
-            | .....|          |..edit_me....--->....................................... |
-            | .....'----------'........................................................ |
-            | ......................................................................... |
-            | ...................----------------..---------------..................... |
-            | ..................| ASCII        > || thin_box      |.................... |
-            | ..................| Rules line   > || text          |.................... |
-            | ..................| Load           || wirl_arrow    |.................... |
-    grid------------->..........| Save           || arrow         |.----------......... |
-            | ..................| Export       > || box         > || star_box |........ |
-            | ..................'----------------'| Rulers      > |'----------'........ |
-            | ...........................^........| Misc        > |.................... |
-            | ...........................|........| T_star        |.................... |
-            | ...........................|........'---------------'.................... |
-            | ...........................|............................................. |
-            | ...........................|............................................. |
-            | ...........................|............................................. |
-            | ...........................|............................................. |
-            | ...........................|............................................. |
-            | ...........................|............................................. |
-            '----------------------------|----------------------------------------------'
-                                         |
-                                   context menu
+            .-----------------------------------------------------------------.
+            |                             Asciio                              |
+            |-----------------------------------------------------------------|
+            | ............................................................... |
+            | ..............-------------..------------..--------------...... |
+            | .............| stencils  > || asciio   > || box          |..... |
+            | .............| Rulers    > || computer > || text         |..... |
+            | .............| File      > || people   > || wirl_arrow   |..... |
+     grid---------->.......'-------------'| divers   > || axis         |..... |
+            | ............................'------------'| boxes      > |..... |
+            | ......................^...................| rulers     > |..... |
+            | ......................|...................'--------------'..... |
+            | ......................|........................................ |
+            | ......................|........................................ |
+            | ......................|........................................ |
+            | ......................|........................................ |
+            '-----------------------|-----------------------------------------'
+                                    |
+                                    |
+                              context menu
 				   
 
 =head2 context menu
@@ -141,7 +131,7 @@ implemented are:
 
 =back
 
-A window displaying the currently aailable commands is displayed if you press B<CTL+K>.
+A window displaying the currently available commands is displayed if you press B<K>.
 
 =head2 elements
 
@@ -180,6 +170,11 @@ Both are implemented within the same code. Try double clicking on a box to see w
          edit_me                 (O.o)  <------------'
                                  (> <)
 
+=head3 your own stencils
+
+Take a look at I<setup/stencils/computer> for a stencil example. Stencils lites in I<setup/setup.ini> will
+be loaded when B<Asciio> starts.
+
 =head3 your own element type
 
 For simple elemnts, put your design in a box. that should cover 90% of anyone's needs. You can look in 
@@ -187,14 +182,9 @@ I<lib/stripes> for element implementation examples.
 
 =head2 exporting to ASCII
 
-In the context menu un I<Export>, you can export to a file in ASCII format but using the B<.txt> extension.
+You can export to a file in ASCII format but using the B<.txt> extension.
 
-=head1 TODO
-
-There is much to be done. I didn't think I'd spend so much time writting B<asciio> to start with and I can see it's going to take 
-much more work. Still it's quite usable for a quick application. You are very welcome to give me feedback and even join in the
-development of B<asciio>. For Christmas(tm), I'll iron out the last problems and do some refactoring. I'll then add support for 
-externally defined routing mechanisms and will work on a wirl arrow that has more than two segments.
+Exporting to the clipboard is done with B<ctl + e>.
 
 =head1 EXAMPLES
 
@@ -276,6 +266,7 @@ my $self =
 		FONT_SIZE => '10',
 		TAB_AS_SPACES => '   ',
 		OPAQUE_ELEMENTS => 1,
+		DISPLAY_GRID => 1,
 		
 		PREVIOUS_X => -1, PREVIOUS_Y => -1,
 		MOUSE_X => 0, MOUSE_Y => 0,
@@ -314,7 +305,6 @@ my $self =
 			},
 		
 		NEXT_GROUP_COLOR => 0, 
-		GROUP_COLORS  => [0 .. 4] ,
 			
 		WORK_DIRECTORY => '.asciio_work_dir',
 		CREATE_BACKUP => 1,
@@ -324,10 +314,7 @@ my $self =
 		DO_STACK => [] ,
 		}, __PACKAGE__ ;
 
-$self->{CURRENT_ACTIONS} = $self->{ACTIONS}  ;
-
 $drawing_area->can_focus(TRUE) ;
-$self->set_font($self->{FONT_FAMILY}, $self->{FONT_SIZE});
 
 $drawing_area->signal_connect(configure_event => \&configure_event, $self);
 $drawing_area->signal_connect(expose_event => \&expose_event, $self);
@@ -347,7 +334,32 @@ $drawing_area->set_events
 		key-release-mask
 		/]);
 
+$self->event_options_changed() ;
+
 return($self) ;
+}
+
+#-----------------------------------------------------------------------------
+
+sub event_options_changed
+{
+my ($self) = @_;
+
+my $number_of_group_colors = scalar(@{$self->{COLORS}{group_colors}}) ;
+$self->{GROUP_COLORS} = [0 .. $number_of_group_colors - 1] ,
+
+$self->{CURRENT_ACTIONS} = $self->{ACTIONS}  ;
+
+$self->set_font($self->{FONT_FAMILY}, $self->{FONT_SIZE});
+}
+
+#-----------------------------------------------------------------------------
+
+sub destroy
+{
+my ($self) = @_;
+
+$self->{widget}->get_toplevel()->destroy() ;
 }
 
 #-----------------------------------------------------------------------------
@@ -459,44 +471,36 @@ $self->{PIXMAP}->draw_rectangle
 my ($character_width, $character_height) = $self->get_character_size() ;
 my ($widget_width, $widget_height) = $self->{PIXMAP}->get_size();
 
-# draw grid
-$gc->set_foreground($self->get_color('grid'));
-
-for my $horizontal (0 .. ($widget_height/$character_height) + 1)
+if($self->{DISPLAY_GRID})
 	{
-	$self->{PIXMAP}->draw_line
-				(
-				$gc,
-				0,  $horizontal * $character_height,
-				$widget_width, $horizontal * $character_height
-				);
-	}
+	$gc->set_foreground($self->get_color('grid'));
 
-for my $vertical(0 .. ($widget_width/$character_width) + 1)
-	{
-	$self->{PIXMAP}->draw_line
-				(
-				$gc,
-				$vertical * $character_width, 0,
-				$vertical * $character_width, $widget_height
-				);
-	}
+	for my $horizontal (0 .. ($widget_height/$character_height) + 1)
+		{
+		$self->{PIXMAP}->draw_line
+					(
+					$gc,
+					0,  $horizontal * $character_height,
+					$widget_width, $horizontal * $character_height
+					);
+		}
 
+	for my $vertical(0 .. ($widget_width/$character_width) + 1)
+		{
+		$self->{PIXMAP}->draw_line
+					(
+					$gc,
+					$vertical * $character_width, 0,
+					$vertical * $character_width, $widget_height
+					);
+		}
+	}
+	
 # draw elements
 for my $element (@{$self->{ELEMENTS}})
 	{
 	my ($background_color, $foreground_color) =  $element->get_colors() ;
 	
-	$background_color = 
-		defined $background_color
-			? $self->get_color($background_color)
-			: $self->get_color('element_background') ;
-		
-	$foreground_color = 
-		defined $foreground_color
-			? $self->get_color($foreground_color)
-			: $self->get_color('element_foreground') ;
-			
 	if($self->is_element_selected($element))
 		{
 		if(exists $element->{GROUP} and defined $element->{GROUP}[-1])
@@ -514,15 +518,31 @@ for my $element (@{$self->{ELEMENTS}})
 		}
 	else
 		{
-		if(exists $element->{GROUP} and defined $element->{GROUP}[-1])
+		if(defined $background_color)
 			{
-			$background_color = 
-				$self->get_color
-					(
-					$self->{COLORS}{group_colors}[$element->{GROUP}[-1]{GROUP_COLOR}][1]
-					) ;
+			$background_color = $self->get_color($background_color) ;
+			}
+		else
+			{
+			if(exists $element->{GROUP} and defined $element->{GROUP}[-1])
+				{
+				$background_color = 
+					$self->get_color
+						(
+						$self->{COLORS}{group_colors}[$element->{GROUP}[-1]{GROUP_COLOR}][1]
+						) ;
+				}
+			else
+				{
+				$background_color = $self->get_color('element_background') ;
+				}
 			}
 		}
+			
+	$foreground_color = 
+		defined $foreground_color
+			? $self->get_color($foreground_color)
+			: $self->get_color('element_foreground') ;
 			
 	$gc->set_foreground($foreground_color);
 	
@@ -605,7 +625,11 @@ for my $connection (@{$self->{CONNECTIONS}})
 		$draw_connection++ ;
 		
 		my $connectee_connection = $connection->{CONNECTEE}->get_named_connection($connection->{CONNECTION}{NAME}) ;
-		$connected_connectors{$connection->{CONNECTEE}}{$connectee_connection->{X}}{$connectee_connection->{Y}}++ ;
+		
+		if($connectee_connection)
+			{
+			$connected_connectors{$connection->{CONNECTEE}}{$connectee_connection->{X}}{$connectee_connection->{Y}}++ ;
+			}
 		}
 		
 	if($draw_connection)
@@ -751,7 +775,7 @@ if($self->exists_action("${modifiers}-button_release"))
 	return TRUE ;
 	}
 
-if($self->{MODIFIED_INDEX} == $self->{MODIFIED})
+if(defined $self->{MODIFIED_INDEX} && defined $self->{MODIFIED} && $self->{MODIFIED_INDEX} == $self->{MODIFIED})
 	{
 	$self->pop_undo_buffer(1) ; # no changes
 	}
@@ -760,7 +784,6 @@ $self->update_display();
 }
 
 #-----------------------------------------------------------------------------
-
 sub button_press_event 
 {
 #~ print "button_press_event\n" ;
@@ -773,10 +796,11 @@ $self->create_undo_snapshot() ;
 $self->{MODIFIED_INDEX} = $self->{MODIFIED} ;
 
 my $modifiers = get_key_modifiers($event) ;
+my $button = ${event}->button() ;
 
-if($self->exists_action("${modifiers}-button_press"))
+if($self->exists_action("${modifiers}-button_press-$button"))
 	{
-	$self->run_actions(["${modifiers}-button_press", $event]) ;
+	$self->run_actions(["${modifiers}-button_press-$button", $event]) ;
 	return TRUE ;
 	}
 
@@ -788,76 +812,8 @@ if($event->type eq '2button-press')
 	
 	if(@element_over)
 		{
-		
 		my $selected_element = $element_over[0] ;
-		
-		$selected_element->edit() ;
-		
-		# handle connections
-		if($self->is_connected($selected_element))
-			{
-			# disconnect current connections
-			$self->delete_connections_containing($selected_element) ;
-			}
-			
-		#~ !!! TODO if not already connected to them (same connection)
-		$self->connect_elements($selected_element) ; # connect to new elements if any
-		
-		
-		for my $connection ($self->get_connected($selected_element))
-			{
-			# all connection where the selected element is the connectee
-			
-			my ($new_connection) = # in characters relative to element origin
-					$selected_element->get_named_connection($connection->{CONNECTION}{NAME}) ;
-			
-			if(defined $new_connection)
-				{
-				my ($x_offset, $y_offset, $width, $height, $new_connector) = 
-					$connection->{CONNECTED}->move_connector
-						(
-						$connection->{CONNECTOR}{NAME},
-						$new_connection->{X} - $connection->{CONNECTION}{X},
-						$new_connection->{Y}- $connection->{CONNECTION}{Y}
-						) ;
-						
-				$connection->{CONNECTED}{X} += $x_offset ;
-				$connection->{CONNECTED}{Y} += $y_offset;
-				
-				# the connection point has also changed
-				$connection->{CONNECTOR} = $new_connector ;
-				$connection->{CONNECTION} = $new_connection ;
-				
-				$connection->{FIXED}++ ;
-				
-				#find the other connectors belonging to this connected
-				for my $other_connection (grep{ ! $_->{FIXED}} @{$self->{CONNECTIONS}})
-					{
-					# move them relatively to their previous position
-					if($connection->{CONNECTED} == $other_connection->{CONNECTED})
-						{
-						my ($new_connector) = # in characters relative to element origin
-								$other_connection->{CONNECTED}->get_named_connection($other_connection->{CONNECTOR}{NAME}) ;
-						
-						$other_connection->{CONNECTOR} = $new_connector ;
-						$other_connection->{FIXED}++ ;
-						}
-					}
-					
-				for my $connection (@{$self->{CONNECTIONS}})
-					{
-					delete $connection->{FIXED} ;
-					}
-				}
-			else
-				{
-				$self->delete_connections($connection) ;
-				}
-				
-			#~ TODO fix the other connection as move does above
-			}
-			
-		$self->{MODIFIED }++ ;
+		$self->edit_element($selected_element) ;
 		$self->update_display();
 		}
 		
@@ -906,6 +862,14 @@ if($event->button == 1)
 	$self->update_display();
 	}
 	
+if($event->button == 2) 
+	{
+	my ($x, $y) = $self->closest_character($event->coords()) ;
+	$self->{SELECTION_RECTANGLE} = {START_X => $x , START_Y => $y} ;
+	
+	$self->update_display();
+	}
+  
 if($event->button == 3) 
 	{
 	$self->display_popup_menu($event) ;
@@ -981,6 +945,11 @@ if ($event->state >= "button1-mask")
 		}
 	}
 
+if ($event->state >= "button2-mask") 
+	{
+	$self->select_element_event($x, $y, sub{ref $_[0] ne 'App::Asciio::stripes::section_wirl_arrow'}) ;
+	}
+	
 return TRUE;
 }
 
@@ -988,7 +957,7 @@ return TRUE;
 
 sub select_element_event
 {
-my ($self, $x, $y) = @_ ;
+my ($self, $x, $y, $filter) = @_ ;
 
 my ($x_offset, $y_offset) = ($x - $self->{PREVIOUS_X},  $y - $self->{PREVIOUS_Y}) ;
 	
@@ -997,9 +966,13 @@ if($x_offset != 0 || $y_offset != 0)
 	$self->{SELECTION_RECTANGLE}{END_X} = $x ;
 	$self->{SELECTION_RECTANGLE}{END_Y} = $y ;
 	
+	$filter = sub {1} unless defined $filter ;
+	
 	$self->select_elements
 		(
 		1,
+		grep
+			{ $filter->($_) }
 		grep # elements within selection rectangle
 			{
 			$self->element_completely_within_rectangle
@@ -1098,6 +1071,67 @@ Undoubtedly many as I wrote this as a fun little project where I used no design 
 This program is free software; you can redistribute
 it and/or modify it under the same terms as Perl itself.
 
+=head1 SUPPORTED OSes
+
+=head2 Gentoo
+
+I run gentoo, packages to install gtk-perl exist. Install Ascii with cpan.
+
+=head2 FreeBSD
+
+FreeBSD users can now install asciio either by package:
+
+$ pkg_add -r asciio
+
+or from source (out of the ports system) by:
+
+$ cd /usr/ports/graphics/asciio
+$ make install clean
+
+Thanks to Emanuel Haupt.
+
+=head2 Ubuntu and Debian
+
+Ports are on the way.
+
+=head2 Windows
+
+AsciiO is part of B<camelbox> and can be found here: L<http://code.google.com/p/camelbox/>. Install, run AsciiO from the 'bin' directory.
+
+      .-------------------------------.
+     /                               /|
+    /     camelbox for win32        / |
+   /                               /  |
+  /                               /   |
+ .-------------------------------.    |
+ |  ______\\_,                   |    |
+ | (_. _ o_ _/                   |    |
+ |  '-' \_. /                    |    |
+ |      /  /                     |    |
+ |     /  /    .--.  .--.        |    |
+ |    (  (    / '' \/ '' \   "   |    |
+ |     \  \_.'            \   )  |    |
+ |     ||               _  './   |    |
+ |      |\   \     ___.'\  /     |    |
+ |        '-./   .'    \ |/      |    |
+ |           \| /       )|\      |    |
+ |            |/       // \\     |    .
+ |            |\    __//   \\__  |   /
+ |           //\\  /__/  mrf\__| |  /
+ |       .--_/  \_--.            | /
+ |      /__/      \__\           |/      
+ '-------------------------------'
+
+B<camelbox> is a great distribution for windows. I hope it will merge with X-berry series of Perl distributions.
+
+=head1 Mac OsX
+
+This works too (and I have screenshots to prove it :). I don't own a mac and the mac user hasn't send me how to do it yet.
+
+=head1 other unices
+
+YMMV, install gtk-perl and AsciiO from cpan.
+
 =head1 SEE ALSO
 
 	http://www.jave.de
@@ -1106,10 +1140,30 @@ it and/or modify it under the same terms as Perl itself.
 	http://www.codeproject.com/KB/macros/codeplotter.aspx
 	http://search.cpan.org/~jpierce/Text-FIGlet-1.06/FIGlet.pm
 	http://www.fossildraw.com/?gclid=CLanxZXxoJECFRYYEAodnBS8Dg (doesn't always respond)
+	
+	http://www.ascii-art.de (used some entries as base for the network stencil)
+	http://c2.com/cgi/wiki?UmlAsciiArt
+	http://www.textfiles.com/art/
+	http://www2.b3ta.com/_bunny/texbunny.gif
+	
+
+     *\o_               _o/*
+      /  *             *  \
+     <\       *\o/*       />
+                )
+         o/*   / >    *\o
+         <\            />
+ __o     */\          /\*     o__
+ * />                        <\ *
+  /\*    __o_       _o__     */\
+        * /  *     *  \ *
+         <\           />
+              *\o/*
+ ejm97        __)__
 
 =cut
 
 #------------------------------------------------------------------------------------------------------
 
-1 ;
+"ASCII world domination!"  ;
 

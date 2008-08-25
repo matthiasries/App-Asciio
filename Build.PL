@@ -19,6 +19,7 @@ lib/App/Asciio/Io.pm
 lib/App/Asciio/Menues.pm
 lib/App/Asciio/Setup.pm
 lib/App/Asciio/Undo.pm
+lib/App/Asciio/Options.pm
 
 lib/App/Asciio/stripes/editable_arrow2.pm
 lib/App/Asciio/stripes/editable_box2.pm
@@ -43,13 +44,18 @@ setup/setup.ini
 
 setup/actions/align.pl
 setup/actions/clipboard.pl
-setup/actions/context_menu_multi_wirl.pl
 setup/actions/debug.pl
 setup/actions/elements_manipulation.pl
 setup/actions/file.pl
 setup/actions/mouse.pl
 setup/actions/new_elements.pl
+setup/actions/colors.pl
 setup/actions/unsorted.pl
+setup/actions/presentation.pl
+
+setup/actions/context_menu_multi_wirl.pl
+setup/actions/context_menu_box.pl
+setup/actions/context_menu_rulers.pl
 
 setup/asciio_object/basic.pl
 setup/hooks/canonize_connections.pl
@@ -57,9 +63,12 @@ setup/hooks/canonize_connections.pl
 setup/import_export/ascii.pl
 setup/import_export/asciioe.pl
 setup/import_export/perl.pl
+setup/import_export/png.pl
 
-setup/stencils/types.asciio
-setup/stencils/user_types.asciio
+setup/stencils/asciio
+setup/stencils/computer
+setup/stencils/people
+setup/stencils/divers
 ) ;
 
 for(@setup_lib)
@@ -250,7 +259,7 @@ my $build = $class->new
 	module_name => 'App::Asciio',
 	
 	#~ dist_version => GetVersionAndRevisionFrom('lib/App/Asciio.pm'),
-	dist_version => '0.95_01',
+	dist_version => '1.00',
 	
 	license => 'perl',
 	

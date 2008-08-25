@@ -118,30 +118,77 @@ my $window = new Gtk2::Window() ;
 
 my $dialog = Gtk2::Dialog->new($title, $window, 'destroy-with-parent')  ;
 $dialog->set_default_size (300, 150);
-$dialog->add_button ('Continue editing' => 'no');
-$dialog->add_button ('Quit and loose changes' => 'yes');
+
+add_button_with_icon ($dialog, 'Continue editing', 'gtk-cancel' => 'cancel');
+add_button_with_icon ($dialog, 'Save and Quit', 'gtk-save' => 999);
+add_button_with_icon ($dialog, 'Quit and loose changes', 'gtk-ok' => 'ok');
 
 my $lable = Gtk2::Label->new($text);
 $dialog->vbox->add ($lable);
 $lable->show;
 
 my $result = $dialog->run() ;
+$result = 'save_and_quit' if "$result" eq "999" ;
 
 $dialog->destroy ;
 
 return $result ;
 }
+
+sub add_button_with_icon {
+	# code by Muppet
+        my ($dialog, $text, $stock_id, $response_id) = @_;
+
+        my $button = create_button ($text, $stock_id);
+        $button->show;
+
+        $dialog->add_action_widget ($button, $response_id);
+}
+
+#
+# Create a button with a stock icon but with non-stock text.
+#
+sub create_button {
+	# code by Muppet
+        my ($text, $stock_id) = @_;
+
+        my $button = Gtk2::Button->new ();
+        
+        #
+        # This setup is cribbed from gtk_button_construct_child()
+        # in gtkbutton.c.  It does not handle all the details like
+        # left-to-right ordering and alignment and such, as in the
+        # real button code.
+        #
+        my $image = Gtk2::Image->new_from_stock ($stock_id, 'button');
+        my $label = Gtk2::Label->new ($text); # accepts mnemonics
+        $label->set_mnemonic_widget ($button);
+
+        my $hbox = Gtk2::HBox->new ();
+        $hbox->pack_start ($image, FALSE, FALSE, 0);
+        $hbox->pack_start ($label, FALSE, FALSE, 0);
+
+        $hbox->show_all ();
+
+        $button->add ($hbox);
+
+        return $button;
+}
+
+
 #-----------------------------------------------------------------------------
 
 sub display_edit_dialog
 {
 my ($self, $title, $text) = @_ ;
 
+$text ='' unless defined $text ;
+
 my $window = new Gtk2::Window() ;
 
 my $dialog = Gtk2::Dialog->new($title, $window, 'destroy-with-parent')  ;
 $dialog->set_default_size (300, 150);
-$dialog->add_button ('gtk-close' => 'close');
+$dialog->add_button ('gtk-ok' => 'ok');
 
 my $textview = Gtk2::TextView->new;
 $textview->modify_font (Gtk2::Pango::FontDescription->from_string ('monospace 10'));
@@ -152,12 +199,23 @@ my $buffer = $textview->get_buffer;
 $dialog->vbox->add ($textview);
 $textview->show;
 
+#
+# Set up the dialog such that Ctrl+Return will activate the "ok"  response. Muppet
+#
+#~ my $accel = Gtk2::AccelGroup->new;
+#~ $accel->connect
+		#~ (
+		#~ Gtk2::Gdk->keyval_from_name ('Return'), ['control-mask'], [],
+                #~ sub { $dialog->response ('ok'); }
+		#~ );
+		
+#~ $dialog->add_accel_group ($accel);
 
 $dialog->run() ;
 
 my $new_text =  $textview->get_buffer->get_text($buffer->get_start_iter, $buffer->get_end_iter, TRUE) ;
- $dialog->destroy ;
 
+$dialog->destroy ;
 
 return $new_text
 }
@@ -193,7 +251,7 @@ my $window = new Gtk2::Window() ;
 
 my $dialog = Gtk2::Dialog->new('Box attributes', $window, 'destroy-with-parent')  ;
 $dialog->set_default_size (450, 305);
-$dialog->add_button ('gtk-close' => 'close');
+$dialog->add_button ('gtk-ok' => 'ok');
 
 #~ my $vbox = $dialog->vbox ;
 my $dialog_vbox = $dialog->vbox ;
@@ -237,8 +295,13 @@ $textview->modify_font (Gtk2::Pango::FontDescription->from_string ('monospace 10
 my $text_buffer = $textview->get_buffer;
 $text_buffer->insert ($text_buffer->get_end_iter, $text);
 
-$vbox->add ($textview);
-$textview->show;
+$vbox->add ($textview) ;
+$textview->show() ;
+
+# Focus and select, code by Tian
+$text_buffer->select_range($text_buffer->get_start_iter, $text_buffer->get_end_iter);
+$textview->grab_focus() ;
+
 
 # some buttons
 #~ my $hbox = Gtk2::HBox->new (TRUE, 4);

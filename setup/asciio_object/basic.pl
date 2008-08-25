@@ -1,6 +1,7 @@
 FONT_FAMILY => 'Monospace',
 FONT_SIZE => '10',
 TAB_AS_SPACES => '   ',
+DISPLAY_GRID => 1,
 COPY_OFFSET_X => 3,
 COPY_OFFSET_Y => 3,
 COLORS =>
@@ -29,9 +30,24 @@ COLORS =>
 	extra_point => [230, 198, 133],
 	},
 
-NEXT_GROUP_COLOR => 0, 
-GROUP_COLORS  => [0 .. 4] ,
+RULER_LINES =>
+	[
+		{
+		TYPE => 'VERTICAL',
+		COLOR => [220, 200, 200],
+		POSITION => 80,
+		NAME => 'RIGHT_LIMIT',
+		},
+		
+		{
+		TYPE => 'HORIZONTAL',
+		COLOR => [220, 200, 200],
+		POSITION => 50,
+		NAME => 'BOTTOM_LIMIT',
+		},
+	], 
 	
 WORK_DIRECTORY => '.asciio_work_dir',
 CREATE_BACKUP => 1,
+
 
