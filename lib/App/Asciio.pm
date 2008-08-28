@@ -30,13 +30,13 @@ use App::Asciio::Options ;
 
 #-----------------------------------------------------------------------------
 
-our $VERSION = '1.00' ;
+our $VERSION = '1.01' ;
 
 #-----------------------------------------------------------------------------
 
 =head1 NAME 
 
- AsciiO - Plain ASCII diagram
+App::Asciio - Plain ASCII diagram
 
 	                  |     |             |       |
 	          |       |     |      |      |       |

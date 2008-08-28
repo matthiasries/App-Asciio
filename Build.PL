@@ -259,7 +259,7 @@ my $build = $class->new
 	module_name => 'App::Asciio',
 	
 	#~ dist_version => GetVersionAndRevisionFrom('lib/App/Asciio.pm'),
-	dist_version => '1.00',
+	dist_version => '1.01',
 	
 	license => 'perl',
 	
@@ -309,7 +309,7 @@ my $build = $class->new
 	
 	script_files => 'script/asciio',
 	dist_author  => 'Khemir Nadim ibn Hamouda. <nadim@khemir.net>',
-	dist_abstract => 'Developer release of asciio',
+	dist_abstract => 'App::Asciio - ',
 	);
 	
 $build->create_build_script;

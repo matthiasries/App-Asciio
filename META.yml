@@ -1,9 +1,9 @@
 ---
 name: App-Asciio
-version: 1.00
+version: 1.01
 author:
   - 'Khemir Nadim ibn Hamouda. <nadim@khemir.net>'
-abstract: Developer release of asciio
+abstract: 'App::Asciio - '
 license: perl
 resources:
   license: http://dev.perl.org/licenses/
@@ -46,7 +46,7 @@ requires:
 provides:
   App::Asciio:
     file: lib/App/Asciio.pm
-    version: 1.00
+    version: 1.01
   App::Asciio::stripes::editable_arrow2:
     file: lib/App/Asciio/stripes/editable_arrow2.pm
   App::Asciio::stripes::editable_box2:

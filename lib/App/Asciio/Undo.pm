@@ -66,7 +66,7 @@ if(defined $new_self)
 	my ($do_stack_pointer, $do_stack) = ($self->{DO_STACK_POINTER}, $self->{DO_STACK}) ;
 	
 	my $decompressed_new_self = decompress $new_self ;
-	$decompressed_new_self .= "\n\n" ; # important line or eval would complains about syntax errors !!!
+	$decompressed_new_self .= "\n\n" ; # important line or eval would complain about syntax errors !!!
 	
 	my $VAR1 ;
 	eval $decompressed_new_self  ;
