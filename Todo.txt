@@ -2,7 +2,31 @@
 # This is the todo.txt #
 #----------------------#
 
-? shortcut to display popup menue
+angled-up arrow
+
+                                            .---- N::B::T::T::UDP
+                                           /
+                      .-------- N::B::T::Tracker
+                     /                     \
+                    /   .-- N::B::T::File   `--- N::B::T::T::HTTP
+                   /   /
+            .---- Net::BitTorrent::Torrent
+           /
+          /   .--- Net::BitTorrent::DHT
+         /   /           \
+  Net::BitTorrent         `---- N::B::D::Node
+         \
+          `---- Net::BitTorrent::Peer
+	  
+	  
+multiple box insert command should not insert boxes without text
+	this allows us to have many more separators in the default list
+
+Display version somewhere
+
+convert asciio stencil to new format
+
+? shortcut to display popup menu
 
 shift + click should deselect the object under the cursor
 

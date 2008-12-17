@@ -2,11 +2,11 @@ $VAR1 = [
 
           bless( {
                    'HEIGHT' => 3,
-                   'TEXT' => '.----------.
-|          |
-\'----------\'',
+                   'TEXT' => '.---.
+|   |
+\'---\'',
                    'NAME' => 'box',
-                   'WIDTH' => 12,
+                   'WIDTH' => 5,
 		   'TEXT_ONLY' => '',
 		   'TITLE' => '',
 		   'BOX_TYPE' => 

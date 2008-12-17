@@ -1,9 +1,9 @@
 ---
 name: App-Asciio
-version: 1.01
+version: 1.02.71
 author:
   - 'Khemir Nadim ibn Hamouda. <nadim@khemir.net>'
-abstract: 'App::Asciio - '
+abstract: 'App::Asciio - ASCII diagramming'
 license: perl
 resources:
   license: http://dev.perl.org/licenses/
@@ -32,21 +32,15 @@ requires:
   Readonly: 0
   Sub::Exporter: 0
   Test::Block: 0
-  Test::Dependencies: 0
-  Test::Distribution: 0
   Test::Exception: 0
   Test::NoWarnings: 0
-  Test::Perl::Critic: 0
-  Test::Pod: 0
-  Test::Pod::Coverage: 0
-  Test::Spelling: 0
   Test::Strict: 0
   Test::Warn: 0
   version: 0.5
 provides:
   App::Asciio:
     file: lib/App/Asciio.pm
-    version: 1.01
+    version: 1.02
   App::Asciio::stripes::editable_arrow2:
     file: lib/App/Asciio/stripes/editable_arrow2.pm
   App::Asciio::stripes::editable_box2:
