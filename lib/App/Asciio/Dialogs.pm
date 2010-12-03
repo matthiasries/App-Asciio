@@ -221,7 +221,7 @@ return $new_text
 }
 
 #-----------------------------------------------------------------------------
-
+my $path_name = '';
 sub get_file_name
 {
 my ($self, $type) = @_ ;
@@ -233,9 +233,9 @@ my $file_chooser = Gtk2::FileChooserDialog->new
 				$type, undef, $type,
 				'gtk-cancel' => 'cancel', 'gtk-ok' => 'ok'
 				);
-
+$file_chooser->set_current_folder($path_name);
 $file_name = $file_chooser->get_filename if ('ok' eq $file_chooser->run) ;
-	
+$path_name = $file_chooser->get_current_folder();	
 $file_chooser->destroy;
 
 return $file_name ;
